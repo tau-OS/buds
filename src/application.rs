@@ -7,7 +7,7 @@ use gtk::{
     gio::{self, ActionGroup, ActionMap, ApplicationFlags, Settings},
     glib::{self, clone},
 };
-use he::{prelude::*, subclass::prelude::*, AboutWindow, AboutWindowLicenses, Colors};
+use he::{prelude::*, subclass::prelude::*, AboutWindow, AboutWindowLicenses};
 use log::{debug, info};
 
 mod imp {
@@ -131,23 +131,20 @@ impl Application {
 
     fn show_about(&self) {
         let window = self.active_window().unwrap();
-        // fuck you libhelium lol
-        AboutWindow::new(
-            &window,
-            "Buds",
-            APP_ID,
-            VERSION,
-            APP_ID,
-            "https://github.com/ItsJamie9494/buds",
-            "https://github.com/ItsJamie9494/buds/issues",
-            "https://github.com/ItsJamie9494/buds",
-            &["Jamie Murphy"],
-            &["Jamie Murphy"],
-            2022,
-            AboutWindowLicenses::Gplv3,
-            Colors::Blue,
-        )
-        .present();
+        let uri = "https://github.com/ItsJamie9494/buds";
+        AboutWindow::builder()
+            .transient_for(&window)
+            .modal(true)
+            .icon(APP_ID)
+            .app_name("Buds")
+            .version(VERSION)
+            .developer_names(vec!["Jamie Murphy".into()])
+            .copyright_year(2022)
+            .license(AboutWindowLicenses::Gplv3)
+            .issue_url(uri)
+            .more_info_url(uri)
+            .build()
+            .present();
     }
 }
 
