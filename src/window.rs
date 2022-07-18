@@ -7,6 +7,7 @@ use gtk::{
 use he::prelude::*;
 
 mod imp {
+    use crate::config::PROFILE;
     use gtk::{
         glib::{self, subclass::InitializingObject},
         subclass::prelude::*,
@@ -14,7 +15,6 @@ mod imp {
     };
     use he::{prelude::*, subclass::prelude::*, ApplicationWindow};
     use log::debug;
-    use crate::config::PROFILE;
 
     #[derive(Default, CompositeTemplate)]
     #[template(resource = "/co/tauos/Buds/window.ui")]

@@ -7,15 +7,15 @@ use gtk::{
     gio::{self, ActionGroup, ActionMap, ApplicationFlags, Settings},
     glib::{self, clone},
 };
-use he::{prelude::*, subclass::prelude::*, AboutWindow, AboutWindowLicenses};
+use he::{prelude::*, subclass::prelude::*, AboutWindow, AboutWindowLicenses, Colors};
 use log::{debug, info};
 
 mod imp {
     use super::*;
+    use crate::config::APP_ID;
     use gtk::{glib::WeakRef, subclass::prelude::*};
     use he::subclass::application::HeApplicationImpl;
     use once_cell::sync::OnceCell;
-    use crate::config::APP_ID;
 
     pub struct Application {
         pub settings: Settings,
@@ -131,17 +131,23 @@ impl Application {
 
     fn show_about(&self) {
         let window = self.active_window().unwrap();
-        AboutWindow::builder()
-            .transient_for(&window)
-            .modal(true)
-            .icon_name(APP_ID)
-            .app_name("Buds")
-            .version(VERSION)
-            .developer_names(vec!["Jamie Murphy".into()])
-            .copyright_year(2022)
-            .license(AboutWindowLicenses::Gplv3)
-            .build()
-            .present();
+        // fuck you libhelium lol
+        AboutWindow::new(
+            &window,
+            "Buds",
+            APP_ID,
+            VERSION,
+            APP_ID,
+            "https://github.com/ItsJamie9494/buds",
+            "https://github.com/ItsJamie9494/buds/issues",
+            "https://github.com/ItsJamie9494/buds",
+            &["Jamie Murphy"],
+            &["Jamie Murphy"],
+            2022,
+            AboutWindowLicenses::Gplv3,
+            Colors::Blue,
+        )
+        .present();
     }
 }
 
