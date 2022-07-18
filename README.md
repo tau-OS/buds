@@ -1,77 +1,46 @@
-# GTK + Rust + Meson + Flatpak = <3
+<img align="left" style="vertical-align: middle" width="120" height="120" src="data/icons/co.tauos.Buds.svg">
 
-A boilerplate template to get started with GTK, Rust, Meson, Flatpak made for GNOME. It can be adapted for other desktop environments like elementary.
+# Buds
 
-<div align="center">
-![Main window](data/resources/screenshots/screenshot1.png "Main window")
-</div>
+A Contacts App
 
-## What does it contains?
+###
 
-- A simple window with a headerbar
-- Bunch of useful files that you SHOULD ship with your application on Linux:
-  - Metainfo: describe your application for the different application stores out there;
-  - Desktop: the application launcher;
-  - Icons: This repo contains three icons, a normal, a nightly & monochromatic icon (symbolic) per the GNOME HIG, exported using [App Icon Preview](https://flathub.org/apps/details/org.gnome.design.AppIconPreview).
-- Flatpak Manifest for nightly builds
-- Dual installation support
-- Uses Meson for building the application
-- Bundles the UI files & the CSS using gresources
-- A pre-commit hook to run rustfmt on your code
-- Tests to validate your Metainfo, Schemas & Desktop files
-- Gsettings to store the window state, more settings could be added
-- Gitlab CI to produce flatpak nightlies
-- i18n support
+[![Please do not theme this app](https://stopthemingmy.app/badge.svg)](https://stopthemingmy.app)
+[![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](http://www.gnu.org/licenses/gpl-3.0)
 
-## How to init a project ?
+## 🛠️ Dependencies
 
-The template ships a simple python script to init a project easily. It asks you a few questions and replaces & renames all the necessary files.
+You'll need the following dependencies:
 
-The script requires having `git` installed on your system.
+> _Note_: This dependency list is the names searched for by `pkg-config`. Depending on your distribution, you may need to install other packages (for example, `gtk4-devel` on Fedora)
 
-You can run it with,
+- `meson`
+- `ninja`
+- `flatpak`
+- `flatpak-builder`
+- `rustc`
+- `gtk4`
+- `libhelium-1`
 
-```shell
-python3 create-project.py
-```
 
-```shell
-➜ python3 create-project.py
-Welcome to GTK Rust Template
-Name: Contrast
-Project Name: contrast
-Application ID (e.g. org.domain.MyAwesomeApp, see: https://developer.gnome.org/ChooseApplicationID/): org.gnome.design.Contrast
-Author: Bilal Elmoussaoui
-Email: bil.elmoussaoui@gmail.com
-```
+## 🏗️ Building
 
-A new directory named `contrast` containing the generated project
+Run the commands below.
 
-## Building the project
-
-Make sure you have `flatpak` and `flatpak-builder` installed. Then run the commands below. Replace `<application_id>` with the value you entered during project creation. Please note that these commands are just for demonstration purposes. Normally this would be handled by your IDE, such as GNOME Builder or VS Code with the Flatpak extension.
+> _Note_: These commands are just for demonstration purposes. Normally this would be handled by your IDE, such as GNOME Builder or VS Code with the Flatpak extension.
 
 ```
-flatpak install org.gnome.Sdk//41 org.freedesktop.Sdk.Extension.rust-stable//21.08 org.gnome.Platform//41
-flatpak-builder --user flatpak_app build-aux/<application_id>.Devel.json
+$ flatpak install org.gnome.Sdk//42 org.freedesktop.Sdk.Extension.rust-stable//21.08 org.gnome.Platform//42
+$ flatpak-builder --user flatpak_app build-aux/co.tauos.Buds.Devel.json
 ```
 
-## Running the project
+## 📦 Running
 
-Once the project is build, run the command below. Replace Replace `<application_id>` and `<project_name>` with the values you entered during project creation. Please note that these commands are just for demonstration purposes. Normally this would be handled by your IDE, such as GNOME Builder or VS Code with the Flatpak extension.
+Run the command below.
+
+> _Note_: These commands are just for demonstration purposes. Normally this would be handled by your IDE, such as GNOME Builder or VS Code with the Flatpak extension.
 
 ```
-flatpak-builder --run flatpak_app build-aux/<application_id>.Devel.json <project_name>
+$ flatpak-builder --run flatpak_app build-aux/co.tauos.Buds.Devel.json buds
 ```
-
-## Community
-
-Join the GNOME and gtk-rs community!
-- [Matrix chat](https://matrix.to/#/#rust:gnome.org): chat with other developers using gtk-rs
-- [Discourse forum](https://discourse.gnome.org/tag/rust): topics tagged with `rust` on the GNOME forum.
-- [GNOME circle](https://circle.gnome.org/): take inspiration from applications and libraries already extending the GNOME ecosystem.
-
-## Credits
-
-- [Podcasts](https://gitlab.gnome.org/World/podcasts)
-- [Shortwave](https://gitlab.gnome.org/World/Shortwave)

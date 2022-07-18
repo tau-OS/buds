@@ -1,6 +1,6 @@
 [Desktop Entry]
 Name=Buds
-Comment=Write a GTK + Rust application
+Comment=A contacts app
 Type=Application
 Exec=buds
 Terminal=false

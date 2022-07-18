@@ -1,36 +1,47 @@
-use gettextrs::gettext;
+use crate::{
+    action,
+    config::{APP_ID, PKGDATADIR, PROFILE, VERSION},
+    window::Window,
+};
+use gtk::{
+    gio::{self, ActionGroup, ActionMap, ApplicationFlags, Settings},
+    glib::{self, clone},
+};
+use he::{prelude::*, subclass::prelude::*, AboutWindow, AboutWindowLicenses};
 use log::{debug, info};
-
-use glib::clone;
-use gtk::prelude::*;
-use gtk::subclass::prelude::*;
-use gtk::{gdk, gio, glib};
-
-use crate::config::{APP_ID, PKGDATADIR, PROFILE, VERSION};
-use crate::window::ExampleApplicationWindow;
 
 mod imp {
     use super::*;
-    use glib::WeakRef;
+    use gtk::{glib::WeakRef, subclass::prelude::*};
+    use he::subclass::application::HeApplicationImpl;
     use once_cell::sync::OnceCell;
+    use crate::config::APP_ID;
 
-    #[derive(Debug, Default)]
-    pub struct ExampleApplication {
-        pub window: OnceCell<WeakRef<ExampleApplicationWindow>>,
+    pub struct Application {
+        pub settings: Settings,
+        pub window: OnceCell<WeakRef<Window>>,
+    }
+
+    impl Default for Application {
+        fn default() -> Self {
+            Self {
+                settings: Settings::new(APP_ID),
+                window: OnceCell::<WeakRef<Window>>::default(),
+            }
+        }
     }
 
     #[glib::object_subclass]
-    impl ObjectSubclass for ExampleApplication {
-        const NAME: &'static str = "ExampleApplication";
-        type Type = super::ExampleApplication;
-        type ParentType = gtk::Application;
+    impl ObjectSubclass for Application {
+        const NAME: &'static str = "Application";
+        type Type = super::Application;
+        type ParentType = he::Application;
     }
 
-    impl ObjectImpl for ExampleApplication {}
-
-    impl ApplicationImpl for ExampleApplication {
+    impl ObjectImpl for Application {}
+    impl ApplicationImpl for Application {
         fn activate(&self, app: &Self::Type) {
-            debug!("GtkApplication<ExampleApplication>::activate");
+            debug!("HeApplication<Application>::activate");
             self.parent_activate(app);
 
             if let Some(window) = self.window.get() {
@@ -39,7 +50,7 @@ mod imp {
                 return;
             }
 
-            let window = ExampleApplicationWindow::new(app);
+            let window = Window::new(app);
             self.window
                 .set(window.downgrade())
                 .expect("Window already set.");
@@ -48,95 +59,66 @@ mod imp {
         }
 
         fn startup(&self, app: &Self::Type) {
-            debug!("GtkApplication<ExampleApplication>::startup");
+            debug!("HeApplication<Application>::startup");
             self.parent_startup(app);
 
             // Set icons for shell
             gtk::Window::set_default_icon_name(APP_ID);
 
-            app.setup_css();
-            app.setup_gactions();
+            app.setup_actions();
             app.setup_accels();
         }
     }
 
-    impl GtkApplicationImpl for ExampleApplication {}
+    impl GtkApplicationImpl for Application {}
+    impl HeApplicationImpl for Application {}
 }
 
 glib::wrapper! {
-    pub struct ExampleApplication(ObjectSubclass<imp::ExampleApplication>)
-        @extends gio::Application, gtk::Application,
-        @implements gio::ActionMap, gio::ActionGroup;
+    pub struct Application(ObjectSubclass<imp::Application>)
+        @extends gio::Application, gtk::Application, he::Application,
+        @implements ActionMap, ActionGroup;
 }
 
-impl ExampleApplication {
+impl Application {
     pub fn new() -> Self {
         glib::Object::new(&[
             ("application-id", &Some(APP_ID)),
-            ("flags", &gio::ApplicationFlags::empty()),
-            (
-                "resource-base-path",
-                &Some("/co/tauos/Buds/"),
-            ),
+            ("flags", &ApplicationFlags::empty()),
+            ("resource-base-path", &Some("/co/tauos/Buds/")),
         ])
         .expect("Application initialization failed...")
     }
 
-    fn main_window(&self) -> ExampleApplicationWindow {
-        self.imp().window.get().unwrap().upgrade().unwrap()
+    fn setup_actions(&self) {
+        action!(
+            self,
+            "quit",
+            clone!(@weak self as app => move |_, _| {
+                app.main_window().close();
+                app.quit();
+            })
+        );
+        action!(
+            self,
+            "about",
+            clone!(@weak self as app => move |_, _| {
+                app.show_about();
+            })
+        )
     }
 
-    fn setup_gactions(&self) {
-        // Quit
-        let action_quit = gio::SimpleAction::new("quit", None);
-        action_quit.connect_activate(clone!(@weak self as app => move |_, _| {
-            // This is needed to trigger the delete event and saving the window state
-            app.main_window().close();
-            app.quit();
-        }));
-        self.add_action(&action_quit);
-
-        // About
-        let action_about = gio::SimpleAction::new("about", None);
-        action_about.connect_activate(clone!(@weak self as app => move |_, _| {
-            app.show_about_dialog();
-        }));
-        self.add_action(&action_about);
-    }
-
-    // Sets up keyboard shortcuts
     fn setup_accels(&self) {
         self.set_accels_for_action("app.quit", &["<Control>q"]);
+        self.set_accels_for_action("app.about", &["<Control>a"]);
     }
 
-    fn setup_css(&self) {
-        let provider = gtk::CssProvider::new();
-        provider.load_from_resource("/co/tauos/Buds/style.css");
-        if let Some(display) = gdk::Display::default() {
-            gtk::StyleContext::add_provider_for_display(
-                &display,
-                &provider,
-                gtk::STYLE_PROVIDER_PRIORITY_APPLICATION,
-            );
-        }
+    pub fn settings(&self) -> Settings {
+        self.imp().settings.clone()
     }
 
-    fn show_about_dialog(&self) {
-        let dialog = gtk::AboutDialog::builder()
-            .logo_icon_name(APP_ID)
-            // Insert your license of choice here
-            // .license_type(gtk::License::MitX11)
-            // Insert your website here
-            // .website("https://gitlab.gnome.org/bilelmoussaoui/buds/")
-            .version(VERSION)
-            .transient_for(&self.main_window())
-            .translator_credits(&gettext("translator-credits"))
-            .modal(true)
-            .authors(vec!["Jamie Murphy".into()])
-            .artists(vec!["Jamie Murphy".into()])
-            .build();
-
-        dialog.present();
+    pub fn main_window(&self) -> Window {
+        self.imp().window.get().unwrap().upgrade().unwrap()
     }
 
     pub fn run(&self) {
@@ -145,5 +127,29 @@ impl ExampleApplication {
         info!("Datadir: {}", PKGDATADIR);
 
         ApplicationExtManual::run(self);
+    }
+
+    fn show_about(&self) {
+        let window = self.active_window().unwrap();
+        AboutWindow::builder()
+            .transient_for(&window)
+            .modal(true)
+            .icon_name(APP_ID)
+            .app_name("Buds")
+            .version(VERSION)
+            .developer_names(vec!["Jamie Murphy".into()])
+            .copyright_year(2022)
+            .license(AboutWindowLicenses::Gplv3)
+            .build()
+            .present();
+    }
+}
+
+impl Default for Application {
+    fn default() -> Self {
+        gio::Application::default()
+            .unwrap()
+            .downcast::<Application>()
+            .unwrap()
     }
 }

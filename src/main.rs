@@ -1,16 +1,18 @@
+extern crate pretty_env_logger;
+
 mod application;
 #[rustfmt::skip]
 mod config;
+mod macros;
 mod window;
 
+use config::{GETTEXT_PACKAGE, LOCALEDIR, RESOURCES_FILE};
 use gettextrs::{gettext, LocaleCategory};
 use gtk::{gio, glib};
 
-use self::application::ExampleApplication;
-use self::config::{GETTEXT_PACKAGE, LOCALEDIR, RESOURCES_FILE};
+use self::application::Application;
 
 fn main() {
-    // Initialize logger
     pretty_env_logger::init();
 
     // Prepare i18n
@@ -23,6 +25,6 @@ fn main() {
     let res = gio::Resource::load(RESOURCES_FILE).expect("Could not load gresource file");
     gio::resources_register(&res);
 
-    let app = ExampleApplication::new();
+    let app = Application::new();
     app.run();
 }
