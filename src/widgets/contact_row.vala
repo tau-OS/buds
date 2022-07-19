@@ -29,15 +29,27 @@ namespace Buds {
         public ContactRow (Folks.Individual individual) {
             Object (individual: individual);
 
-            title = individual.display_name;
-            // TODO button
-            // TODO avatar
+            generate_row ();
 
             individual.notify.connect (on_contact_changed_cb);
         }
 
-        private void on_contact_changed_cb (Object obj, ParamSpec pspec) {
+        private void generate_row () {
             title = individual.display_name;
+            // TODO button
+
+            if (individual.avatar != null) {
+                gicon = individual.avatar;
+                // i will murder the inventor of CSS
+                this.get_first_child ().get_first_child ().add_css_class ("person-icon");
+                this.get_first_child ().get_first_child ().set_overflow (Gtk.Overflow.HIDDEN);
+            } else {
+                // TODO fallback
+            }
+        }
+
+        private void on_contact_changed_cb (Object obj, ParamSpec pspec) {
+            generate_row ();
 
             // HeMiniContentBlock does not implement ListBoxRow
             parent.changed ();
