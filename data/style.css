@@ -1,3 +1,7 @@
 .contacts-scrolled-list {
   background: transparent;
 }
+
+.person-icon {
+  border-radius: 9999px;
+}
