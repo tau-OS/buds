@@ -1,5 +1,0 @@
-data/co.tauos.Buds.desktop.in.in
-data/co.tauos.Buds.gschema.xml.in
-data/co.tauos.Buds.metainfo.xml.in.in
-data/ui/window.ui
-src/application.rs

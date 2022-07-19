@@ -13,34 +13,34 @@ A Contacts App
 
 You'll need the following dependencies:
 
-> _Note_: This dependency list is the names searched for by `pkg-config`. Depending on your distribution, you may need to install other packages (for example, `gtk4-devel` on Fedora)
+> *Note*: This dependency list is the names searched for by `pkg-config`. Depending on your distribution, you may need to install other packages (for example, `gtk4-devel` on Fedora)
 
 - `meson`
-- `ninja`
-- `flatpak`
-- `flatpak-builder`
-- `rustc`
+- `valac`
 - `gtk4`
 - `libhelium-1`
 
-
 ## 🏗️ Building
 
-Run the commands below.
+Simply clone this repo, then run `meson build` to configure the build environment. Change to the build directory and run `ninja test` to build and run automated tests.
 
-> _Note_: These commands are just for demonstration purposes. Normally this would be handled by your IDE, such as GNOME Builder or VS Code with the Flatpak extension.
-
+```bash
+$ meson build --prefix=/usr
+$ cd build
+$ ninja test
 ```
-$ flatpak install org.gnome.Sdk//42 org.freedesktop.Sdk.Extension.rust-stable//21.08 org.gnome.Platform//42
-$ flatpak-builder --user flatpak_app build-aux/co.tauos.Buds.Devel.json
+
+For debug messages on the GUI application, set the `G_MESSAGES_DEBUG` environment variable, e.g. to `all`:
+
+```bash
+G_MESSAGES_DEBUG=all ./src/buds
 ```
 
-## 📦 Running
+## 📦 Installing
 
-Run the command below.
+To install, use `ninja install`, then execute with `buds`.
 
-> _Note_: These commands are just for demonstration purposes. Normally this would be handled by your IDE, such as GNOME Builder or VS Code with the Flatpak extension.
-
-```
-$ flatpak-builder --run flatpak_app build-aux/co.tauos.Buds.Devel.json buds
+```bash
+$ sudo ninja install
+$ buds
 ```

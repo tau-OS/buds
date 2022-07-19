@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop-application">
-  <id>@app-id@</id>
+  <id>co.tauos.Buds</id>
   <metadata_license>CC0</metadata_license>
-  <project_license>GPLv3</project_license>
+  <project_license>GPL-3.0-or-later</project_license>
   <name>Buds</name>
   <summary>A contacts app</summary>
   <description>
@@ -25,6 +25,6 @@
   </kudos>
   <developer_name>Jamie Murphy</developer_name>
   <update_contact>hello@itsjamie.dev</update_contact>
-  <translation type="gettext">@gettext-package@</translation>
-  <launchable type="desktop-id">@app-id@.desktop</launchable>
+  <translation type="gettext">buds</translation>
+  <launchable type="desktop-id">co.tauos.Buds.desktop</launchable>
 </component>

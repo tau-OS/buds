@@ -4,13 +4,15 @@
     <property name="title">Buds</property>
     <child>
       <object class="GtkBox">
-        <property name="orientation">vertical</property>
+        <property name="orientation">horizontal</property>
         <property name="spacing">0</property>
         <child>
-          <object class="HeAppBar">
-            <property name="show_buttons">true</property>
-            <property name="show_back">false</property>
-            <child>
+          <object class="HeSideBar">
+            <property name="title">Contacts</property>
+            <property name="show-back">false</property>
+            <property name="show-buttons">false</property>
+            <property name="width-request">200</property>
+            <child type="titlebar-button">
               <object class="GtkMenuButton">
                 <property name="icon-name">open-menu-symbolic</property>
                 <property name="menu-model">primary_menu</property>
@@ -19,14 +21,15 @@
           </object>
         </child>
         <child>
-          <object class="GtkCenterBox">
-            <property name="vexpand">true</property>
-            <child type="center">
-              <object class="GtkLabel">
-                <property name="label">Hello World</property>
-                <style>
-                  <class name="display" />
-                </style>
+          <object class="GtkBox">
+            <property name="orientation">vertical</property>
+            <property name="spacing">0</property>
+            <property name="hexpand">true</property>
+            <child>
+              <object class="HeAppBar">
+                <property name="flat">true</property>
+                <property name="show-buttons">true</property>
+                <property name="show-back">false</property>
               </object>
             </child>
           </object>
