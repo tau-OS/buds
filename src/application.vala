@@ -19,7 +19,11 @@
 namespace Buds {
     public class Application : He.Application {
         public Application () {
-            Object (application_id: Config.APP_ID, flags: ApplicationFlags.FLAGS_NONE);
+            Object (
+                application_id: Config.APP_ID,
+                flags: ApplicationFlags.FLAGS_NONE,
+                resource_base_path: "/co/tauos/Buds"
+            );
         }
 
         construct {

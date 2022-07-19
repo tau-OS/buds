@@ -1,6 +1,9 @@
 sources = [
    'application.vala',
    'window.vala',
+   'core/store.vala',
+   'core/utils.vala',
+   'widgets/contact_row.vala'
 ]
 
 config_file = configure_file(
@@ -13,6 +16,7 @@ deps = [
     dependency('gtk4'),
     dependency('libhelium-1'),
     dependency('gee-0.8'),
+    dependency('folks'),
     meson.get_compiler('vala').find_library('posix')
 ]
 
