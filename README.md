@@ -18,6 +18,7 @@ You'll need the following dependencies:
 - `meson`
 - `valac`
 - `gtk4`
+- `folks`
 - `libhelium-1`
 
 ## 🏗️ Building
