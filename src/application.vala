@@ -21,8 +21,7 @@ namespace Buds {
         public Application () {
             Object (
                 application_id: Config.APP_ID,
-                flags: ApplicationFlags.FLAGS_NONE,
-                resource_base_path: "/co/tauos/Buds"
+                flags: ApplicationFlags.FLAGS_NONE
             );
         }
 
@@ -41,6 +40,8 @@ namespace Buds {
             accent_color.parse("#56BFA6");
             default_accent_color = He.Color.from_gdk_rgba(accent_color);
 
+            resource_base_path = "/co/tauos/Buds";
+
             base.startup ();
 
             new Buds.Window (this);
@@ -55,9 +56,9 @@ namespace Buds {
             new He.AboutWindow (
                 this.active_window,
                 "Buds" + Config.NAME_SUFFIX,
-                Config.APP_ID,
+                "co.tauos.Buds",
                 Config.VERSION,
-                Config.APP_ID,
+                "co.tauos.Buds",
                 "",
                 "",
                 "",

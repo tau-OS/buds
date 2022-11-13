@@ -9,7 +9,7 @@ project(
 application_id = 'co.tauos.Buds'
 
 if get_option('development')
-  app_id = 'co.tauos.Buds.Devel'
+  app_id = 'co.tauos.Buds'
   name_suffix = ' (Development)'
 else
   app_id = 'co.tauos.Buds'

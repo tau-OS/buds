@@ -43,10 +43,12 @@ namespace Buds {
                 image.add_css_class ("person-icon");
                 image.set_overflow (Gtk.Overflow.HIDDEN);
             } else {
-                // TODO fallback
+                image.icon_name = "avatar-default-symbolic";
+                image.add_css_class ("person-icon-no-img");
+                image.set_overflow (Gtk.Overflow.HIDDEN);
             }
 
-            var main_box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 6);
+            var main_box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 12);
             main_box.append (image);
             main_box.append (title);
 
