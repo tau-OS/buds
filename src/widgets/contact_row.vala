@@ -22,9 +22,10 @@ namespace Buds {
 
         private Gtk.Label title = new Gtk.Label ("");
         private Gtk.Image image = new Gtk.Image ();
+        public bool selected { get; set; }
 
-        public ContactRow (Folks.Individual individual) {
-            Object (individual: individual);
+        public ContactRow (Folks.Individual individual, bool selected) {
+            Object (individual: individual, selected: selected);
 
             generate_row ();
 
