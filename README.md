@@ -31,11 +31,7 @@ $ cd build
 $ ninja test
 ```
 
-For debug messages on the GUI application, set the `G_MESSAGES_DEBUG` environment variable, e.g. to `all`:
-
-```bash
-G_MESSAGES_DEBUG=all ./src/buds
-```
+Or alternatively, run on Builder or VSCode as a flatpak manifest is included.
 
 ## 📦 Installing
 
