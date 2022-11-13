@@ -1,0 +1,140 @@
+{
+    "rename-icon" : "co.tauos.Buds",
+    "app-id": "co.tauos.Buds",
+    "runtime" : "co.tauos.Platform",
+    "runtime-version" : "stable",
+    "sdk" : "co.tauos.Sdk",
+    "command": "co.tauos.Buds",
+    "finish-args": [
+        "--device=dri",
+        "--share=ipc",
+        "--socket=fallback-x11",
+        "--socket=wayland",
+        "--talk-name=org.gnome.evolution.dataserver.AddressBook10",
+        "--talk-name=org.gnome.evolution.dataserver.Sources5",
+        "--filesystem=xdg-data/pixmaps/faces:create",
+        "--filesystem=xdg-cache/evolution/addressbook:ro"
+    ],
+    "cleanup": [
+        "/include",
+        "/lib/pkgconfig",
+        "/man",
+        "/share/doc",
+        "/share/gtk-doc",
+        "/share/man",
+        "/share/pkgconfig",
+        "/share/vala",
+        "*.la",
+        "*.a"
+    ],
+    "modules": [
+        {
+            "name": "libical",
+            "cleanup": [
+                "/lib/cmake"
+            ],
+            "buildsystem": "cmake-ninja",
+            "config-opts": [
+                "-DCMAKE_BUILD_TYPE=Release",
+                "-DCMAKE_INSTALL_LIBDIR=lib",
+                "-DBUILD_SHARED_LIBS:BOOL=ON",
+                "-DICAL_GLIB=true",
+                "-DGOBJECT_INTROSPECTION=true",
+                "-DICAL_GLIB_VAPI=true",
+                "-DICAL_BUILD_DOCS=false"
+            ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://github.com/libical/libical/releases/download/v3.0.14/libical-3.0.14.tar.gz",
+                    "sha256": "4284b780356f1dc6a01f16083e7b836e63d3815e27ed0eaaad684712357ccc8f"
+
+                }
+            ]
+        },
+        {
+            "name" : "evolution-data-server",
+            "cleanup" : [
+                "/lib/cmake",
+                "/lib/evolution-data-server/*-backends",
+                "/libexec",
+                "/share/dbus-1/services"
+            ],
+            "config-opts" : [
+                "-DCMAKE_BUILD_TYPE=Release",
+                "-DENABLE_GTK=ON",
+                "-DENABLE_GOA=OFF",
+                "-DENABLE_UOA=OFF",
+                "-DENABLE_GOOGLE_AUTH=OFF",
+                "-DENABLE_GOOGLE=OFF",
+                "-DENABLE_WITH_PHONENUMBER=OFF",
+                "-DENABLE_VALA_BINDINGS=ON",
+                "-DENABLE_WEATHER=OFF",
+                "-DWITH_OPENLDAP=OFF",
+                "-DWITH_LIBDB=OFF",
+                "-DENABLE_INTROSPECTION=ON",
+                "-DENABLE_INSTALLED_TESTS=OFF",
+                "-DENABLE_GTK_DOC=OFF",
+                "-DENABLE_EXAMPLES=OFF",
+                "-DENABLE_CANBERRA=OFF"
+            ],
+            "buildsystem" : "cmake-ninja",
+            "sources" : [
+                {
+                    "type" : "archive",
+                    "url" : "https://download.gnome.org/sources/evolution-data-server/3.46/evolution-data-server-3.46.0.tar.xz",
+                    "sha256": "e5fa28095a183f7ab5a928e35a828379b481ddef83ed4c7b51a2e3c4aef5cdab"
+                }
+            ],
+            "modules": [
+                {
+                    "name": "intltool",
+                    "cleanup": [ "*" ],
+                    "sources": [
+                      {
+                        "type": "archive",
+                        "url": "https://launchpad.net/intltool/trunk/0.51.0/+download/intltool-0.51.0.tar.gz",
+                        "sha256": "67c74d94196b153b774ab9f89b2fa6c6ba79352407037c8c14d5aeb334e959cd"
+                      },
+                      {
+                        "type": "patch",
+                        "path": "flatpak/intltool-perl5.26-regex-fixes.patch"
+                      }
+                    ]
+                  }
+            ]
+        },
+        {
+            "name": "folks",
+            "buildsystem": "meson",
+            "config-opts": [
+                "-Dtelepathy_backend=false",
+                "-Dinspect_tool=false",
+                "-Dimport_tool=false",
+                "-Dbluez_backend=false"
+            ],
+            "cleanup": [
+                "/bin",
+                "/share/GConf"
+            ],
+            "sources": [
+                {
+                    "type" : "archive",
+                    "url" : "https://download.gnome.org/sources/folks/0.15/folks-0.15.5.tar.xz",
+                    "sha256" : "0fff8a896330cd82aee4598324f7e541c884d0337536212723b4beb38c759086"
+                }
+            ]
+        },
+        {
+            "name" : "buds",
+            "builddir" : true,
+            "buildsystem" : "meson",
+            "sources" : [
+                {
+                    "type" : "dir",
+                    "path" : "."
+                }
+            ]
+        }
+    ]
+}

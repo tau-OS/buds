@@ -2,7 +2,7 @@
 Name=Buds
 Comment=A contacts app
 Type=Application
-Exec=buds
+Exec=co.tauos.Buds
 Terminal=false
 Categories=GNOME;GTK;
 # Translators: Search terms to find this application. Do NOT translate or localize the semicolons! The list MUST also end with a semicolon!

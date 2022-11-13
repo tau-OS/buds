@@ -17,14 +17,11 @@
  */
 
 namespace Buds {
-    public class ContactRow : He.MiniContentBlock {
-        private new Gtk.ListBoxRow parent {
-            get {
-                return ((Gtk.ListBoxRow) get_parent ());
-            }
-        }
-
+    public class ContactRow : Gtk.ListBoxRow {
         public Folks.Individual individual { get; construct; }
+
+        private Gtk.Label title = new Gtk.Label ("");
+        private Gtk.Image image = new Gtk.Image ();
 
         public ContactRow (Folks.Individual individual) {
             Object (individual: individual);
@@ -32,27 +29,33 @@ namespace Buds {
             generate_row ();
 
             individual.notify.connect (on_contact_changed_cb);
+            this.add_css_class ("mini-content-block");
         }
 
         private void generate_row () {
-            title = individual.display_name;
-            // TODO button
+            title.label = individual.display_name;
+            title.add_css_class ("cb-title");
+
+            image.pixel_size = 32;
 
             if (individual.avatar != null) {
-                gicon = individual.avatar;
-                // i will murder the inventor of CSS
-                this.get_first_child ().get_first_child ().add_css_class ("person-icon");
-                this.get_first_child ().get_first_child ().set_overflow (Gtk.Overflow.HIDDEN);
+                image.gicon = individual.avatar;
+                image.add_css_class ("person-icon");
+                image.set_overflow (Gtk.Overflow.HIDDEN);
             } else {
                 // TODO fallback
             }
+
+            var main_box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 6);
+            main_box.append (image);
+            main_box.append (title);
+
+            main_box.set_parent (this);
         }
 
         private void on_contact_changed_cb (Object obj, ParamSpec pspec) {
             generate_row ();
-
-            // HeMiniContentBlock does not implement ListBoxRow
-            parent.changed ();
+            changed ();
         }
     }
 }

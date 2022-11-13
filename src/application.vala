@@ -36,32 +36,37 @@ namespace Buds {
             this.set_accels_for_action ("app.quit", {"<primary>q"});
         }
 
-        public override void activate () {
-            base.activate ();
-            var win = this.active_window;
-            if (win == null) {
-                win = new Buds.Window (this);
-            }
-            win.present ();
+        protected override void startup () {
+            Gdk.RGBA accent_color = { 0 };
+            accent_color.parse("#56BFA6");
+            default_accent_color = He.Color.from_gdk_rgba(accent_color);
+
+            base.startup ();
+
+            new Buds.Window (this);
         }
 
+        protected override void activate () {
+            active_window?.present ();
+        }
 
         private void on_about_action () {
-            string[] developers = { "Jamie Murphy" };
-            string[] translators = { "Jamie Murphy" };
-            new He.AboutWindow (this.active_window,
-                            "Buds" + Config.NAME_SUFFIX,
-                            Config.APP_ID,
-                            Config.VERSION,
-                            Config.APP_ID,
-                            "",
-                            "",
-                            "",
-                            translators,
-                            developers,
-                            2022,
-                            He.AboutWindow.Licenses.GPLv3,
-                            He.Colors.BLUE).present ();
+            string[] developers = { "Lains" };
+            new He.AboutWindow (
+                this.active_window,
+                "Buds" + Config.NAME_SUFFIX,
+                Config.APP_ID,
+                Config.VERSION,
+                Config.APP_ID,
+                "",
+                "",
+                "",
+                {},
+                developers,
+                2022,
+                He.AboutWindow.Licenses.GPLv3,
+                He.Colors.MINT
+            ).present ();
         }
 
         private void on_preferences_action () {

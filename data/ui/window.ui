@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <template class="BudsWindow" parent="HeApplicationWindow">
-    <property name="title">Buds</property>
+    <property name="default-width">600</property>
+    <property name="default-height">500</property>
     <child>
       <object class="GtkBox">
         <property name="orientation">horizontal</property>
@@ -10,6 +11,7 @@
           <object class="HeSideBar">
             <property name="title">Contacts</property>
             <property name="show-back">false</property>
+            <property name="has-margins">false</property>
             <property name="show-buttons">false</property>
             <property name="width-request">200</property>
             <child type="titlebar-button">
@@ -22,17 +24,23 @@
               <object class="GtkScrolledWindow">
                 <property name="hscrollbar-policy">never</property>
                 <property name="vexpand">true</property>
+                <property name="margin-start">18</property>
+                <property name="margin-end">18</property>
                 <child>
                   <object class="GtkListBox" id="contacts_listbox">
-                    <property name="selection-mode">browse</property>
+                    <property name="selection-mode">single</property>
                     <style>
-                      <class name="boxed-list" />
-                      <class name="contacts-scrolled-list" />
+                      <class name="content-list" />
                     </style>
                   </object>
                 </child>
               </object>
             </child>
+          </object>
+        </child>
+        <child>
+          <object class="GtkSeparator">
+            <property name="orientation">vertical</property>
           </object>
         </child>
         <child>
@@ -56,7 +64,7 @@
   <menu id="primary_menu">
     <section>
       <item>
-        <attribute name="label" translatable="yes">_About Buds</attribute>
+        <attribute name="label" translatable="yes">About Buds</attribute>
         <attribute name="action">app.about</attribute>
       </item>
     </section>
