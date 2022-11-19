@@ -30,7 +30,6 @@ namespace Buds {
             generate_row ();
 
             individual.notify.connect (on_contact_changed_cb);
-            this.add_css_class ("mini-content-block");
         }
 
         private void generate_row () {
@@ -38,6 +37,7 @@ namespace Buds {
             title.add_css_class ("cb-title");
 
             image.pixel_size = 32;
+            image.add_css_class ("person-icon");
 
             if (individual.avatar != null) {
                 image.gicon = individual.avatar;
@@ -54,6 +54,7 @@ namespace Buds {
             main_box.append (title);
 
             main_box.set_parent (this);
+            main_box.add_css_class ("mini-content-block");
         }
 
         private void on_contact_changed_cb (Object obj, ParamSpec pspec) {
