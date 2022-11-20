@@ -39,5 +39,5 @@ To install, use `ninja install`, then execute with `buds`.
 
 ```bash
 $ sudo ninja install
-$ buds
+$ co.tauos.Buds
 ```
