@@ -45,6 +45,10 @@ namespace Buds {
         private unowned Gtk.Stack stack;
         [GtkChild]
         private unowned He.EmptyPage empty_page;
+        [GtkChild]
+        private unowned He.DisclosureButton phone_button;
+        [GtkChild]
+        private unowned He.DisclosureButton email_button;
 
         public Core.Store store = Core.Store.get_default ();
 
@@ -76,6 +80,24 @@ namespace Buds {
             });
 
             empty_page.action_button.visible = false;
+
+            phone_button.clicked.connect (() => {
+                string ext_txt = phone_block.subtitle;
+
+                // Put this ext_txt in clipboard
+                var display = Gdk.Display.get_default ();
+                unowned var clipboard = display.get_clipboard ();
+                clipboard.set_text (ext_txt);
+            });
+
+            email_button.clicked.connect (() => {
+                string ext_txt = email_block.subtitle;
+
+                // Put this ext_txt in clipboard
+                var display = Gdk.Display.get_default ();
+                unowned var clipboard = display.get_clipboard ();
+                clipboard.set_text (ext_txt);
+            });
         }
 
         private Gtk.Widget create_row_for_item_cb (Object obj) {
