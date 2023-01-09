@@ -12,3 +12,7 @@
 .content-list row:hover {
   background: none;
 }
+
+.search {
+  border-radius: 999px;
+}

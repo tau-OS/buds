@@ -29,11 +29,13 @@ i18n = import('i18n')
 
 add_global_arguments('-DGETTEXT_PACKAGE="@0@"'.format (meson.project_name()), language:'c')
 
-asresources = gnome.compile_resources(
-	'as-resources', join_paths(meson.project_source_root(), 'data', 'resources.gresource.xml'),
-	source_dir: join_paths(meson.project_source_root(), 'data'),
-	c_name: 'as'
+# Blueprint
+subproject('blueprint-compiler')
+add_project_arguments(
+    '--gresourcesdir', meson.current_build_dir() / 'data',
+    language: ['vala']
 )
+#
 
 subdir('data')
 subdir('src')

@@ -1,0 +1,182 @@
+using Gtk 4.0;
+using He 1;
+using Bis 1;
+
+template BudsWindow : He.ApplicationWindow {
+  default-width: 800;
+  default-height: 600;
+  width-request: 360;
+  height-request: 266;
+
+  Box {
+    orientation: vertical;
+
+    Bis.Album album {
+      can-navigate-back: true;
+      can-navigate-forward: true;
+      visible-child: listgrid;
+
+      Bis.AlbumPage {
+        child:
+        He.SideBar listgrid {
+          title: "Contacts";
+          show-back: false;
+          has-margins: false;
+          show-buttons: bind album.folded;
+          width-request: 250;
+          scroller: sw;
+
+          [titlebar-button]
+          MenuButton {
+            icon-name: "open-menu-symbolic";
+            menu-model: primary_menu;
+          }
+
+          [titlebar-button]
+          ToggleButton search_button {
+            icon-name: "system-search-symbolic";
+          }
+
+          SearchEntry search_entry {
+            margin-start: 18;
+            margin-end: 18;
+            margin-bottom: 6;
+            margin-top: 6;
+            placeholder-text: _("Search contacts…");
+            halign: start;
+            visible: bind search_button.active;
+
+            styles [
+                "search",
+            ]
+          }
+
+          ScrolledWindow sw {
+            hscrollbar-policy: never;
+            vexpand: true;
+
+            ListBox contacts_listbox {
+              selection-mode: single;
+              margin-start: 18;
+              margin-end: 18;
+              row-activated => item_activated();
+
+              styles [
+                "content-list",
+              ]
+            }
+          }
+        }
+        ;
+      }
+
+      Bis.AlbumPage {
+        navigatable: false;
+        child:
+        Separator {
+          orientation: vertical;
+        }
+        ;
+      }
+
+      Bis.AlbumPage {
+        child:
+        Box info {
+          orientation: vertical;
+          spacing: 0;
+          hexpand: true;
+
+          He.AppBar info_title {
+            flat: true;
+            show-buttons: true;
+            show-back: bind album.folded;
+          }
+
+          Stack stack {
+            StackPage {
+              name: "empty";
+              child:
+              He.EmptyPage empty_page {
+                title: _("No Selected Contact");
+                description: _("Select a contact to see info.");
+                icon: "system-users-symbolic";
+              }
+              ;
+            }
+
+            StackPage {
+              name: "info";
+              child:
+              Bis.Latch {
+                Box {
+                  orientation: vertical;
+                  spacing: 40;
+                  vexpand: true;
+                  halign: center;
+                  margin-top: 70;
+                  margin-bottom: 18;
+                  margin-start: 18;
+                  margin-end: 18;
+                  width-request: 360;
+
+                  Image contact_image {
+                    pixel-size: 128;
+                    halign: center;
+                  }
+
+                  Label contact_name {
+                    styles [
+                      "display",
+                    ]
+                  }
+
+                  Box {
+                    orientation: vertical;
+                    spacing: 6;
+
+                    He.MiniContentBlock phone_block {
+                      visible: false;
+                      title: _("Phone");
+                      icon: "phone-symbolic";
+
+                      He.DisclosureButton phone_button {
+                        icon: "edit-copy-symbolic";
+                      }
+                    }
+
+                    He.MiniContentBlock email_block {
+                      visible: false;
+                      title: _("Email");
+                      icon: "mail-archive-symbolic";
+                      
+                      He.DisclosureButton email_button {
+                        icon: "edit-copy-symbolic";
+                      }
+                    }
+
+                    He.MiniContentBlock bday_block {
+                      visible: false;
+                      title: _("Birthday");
+                      icon: "x-office-calendar-symbolic";
+                    }
+                  }
+                }
+              }
+              ;
+            }
+          }
+        }
+        ;
+      }
+    }
+  }
+}
+
+menu primary_menu {
+  section {
+    item {
+      label: _("About Buds");
+      action: "app.about";
+    }
+  }
+}

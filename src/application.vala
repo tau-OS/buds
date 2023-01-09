@@ -44,6 +44,8 @@ namespace Buds {
 
             base.startup ();
 
+            Bis.init ();
+
             new Buds.Window (this);
         }
 
