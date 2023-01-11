@@ -71,20 +71,15 @@ template BudsWindow : He.ApplicationWindow {
       }
 
       Bis.AlbumPage {
-        navigatable: false;
-        child:
-        Separator {
-          orientation: vertical;
-        }
-        ;
-      }
-
-      Bis.AlbumPage {
         child:
         Box info {
           orientation: vertical;
           spacing: 0;
           hexpand: true;
+          
+          styles [
+                "main-view",
+          ]
 
           He.AppBar info_title {
             flat: true;
