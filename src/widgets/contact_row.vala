@@ -44,7 +44,7 @@ namespace Buds {
             } else {
                 var name1 = individual.structured_name;
                 image.text = name1.given_name.substring (0, 1).up () + name1.family_name.substring (0, 1).up ();
-                contact_image.image = "";
+                image.image = "";
             }
 
             var main_box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 9);
