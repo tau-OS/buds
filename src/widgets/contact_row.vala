@@ -47,7 +47,7 @@ namespace Buds {
                 image.image = "";
             }
 
-            var main_box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 9);
+            var main_box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 16);
             main_box.append (image);
             main_box.append (title);
 
