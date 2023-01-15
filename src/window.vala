@@ -137,10 +137,11 @@ namespace Buds {
 
             if (contact.avatar != null) {
                 contact_image.text = "";
-                contact_image.image = contact.avatar.to_string ();
+                contact_image.image = "file://" + contact.avatar.to_string ();
             } else {
                 var name1 = contact.structured_name;
                 contact_image.text = name1.given_name.substring (0, 1).up () + name1.family_name.substring (0, 1).up ();
+                contact_image.image = "";
             }
             contact_name.label = contact.display_name;
 

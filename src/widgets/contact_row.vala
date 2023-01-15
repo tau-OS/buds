@@ -40,10 +40,11 @@ namespace Buds {
 
             if (individual.avatar != null) {
                 image.text = "";
-                image.image = individual.avatar.to_string ();
+                image.image = "file://" + individual.avatar.to_string ();
             } else {
                 var name1 = individual.structured_name;
                 image.text = name1.given_name.substring (0, 1).up () + name1.family_name.substring (0, 1).up ();
+                contact_image.image = "";
             }
 
             var main_box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 9);
