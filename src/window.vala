@@ -22,7 +22,7 @@ namespace Buds {
         [GtkChild]
         private unowned Gtk.ListBox contacts_listbox;
         [GtkChild]
-        private unowned Gtk.Image contact_image;
+        private unowned He.Avatar contact_image;
         [GtkChild]
         private unowned Gtk.Label contact_name;
         [GtkChild]
@@ -136,13 +136,11 @@ namespace Buds {
             var contact = get_selected_contact ();
 
             if (contact.avatar != null) {
-                contact_image.gicon = contact.avatar;
-                contact_image.add_css_class ("person-icon");
-                contact_image.set_overflow (Gtk.Overflow.HIDDEN);
+                contact_image.text = "";
+                contact_image.image = contact.avatar.to_string ();
             } else {
-                contact_image.icon_name = "avatar-default-symbolic";
-                contact_image.add_css_class ("person-icon-no-img");
-                contact_image.set_overflow (Gtk.Overflow.HIDDEN);
+                var name1 = contact.structured_name;
+                contact_image.text = name1.given_name.substring (0, 1).up () + name1.family_name.substring (0, 1).up ();
             }
             contact_name.label = contact.display_name;
 

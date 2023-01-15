@@ -21,7 +21,7 @@ namespace Buds {
         public Folks.Individual individual { get; construct; }
 
         private Gtk.Label title = new Gtk.Label ("");
-        private Gtk.Image image = new Gtk.Image ();
+        private He.Avatar image = new He.Avatar (-1, "", "");
         public bool selected { get; set; }
 
         public ContactRow (Folks.Individual individual, bool selected) {
@@ -36,17 +36,14 @@ namespace Buds {
             title.label = individual.display_name;
             title.add_css_class ("cb-title");
 
-            image.pixel_size = 32;
-            image.add_css_class ("person-icon");
+            image.size = 32;
 
             if (individual.avatar != null) {
-                image.gicon = individual.avatar;
-                image.add_css_class ("person-icon");
-                image.set_overflow (Gtk.Overflow.HIDDEN);
+                image.text = "";
+                image.image = individual.avatar.to_string ();
             } else {
-                image.icon_name = "avatar-default-symbolic";
-                image.add_css_class ("person-icon-no-img");
-                image.set_overflow (Gtk.Overflow.HIDDEN);
+                var name1 = individual.structured_name;
+                image.text = name1.given_name.substring (0, 1).up () + name1.family_name.substring (0, 1).up ();
             }
 
             var main_box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 9);
