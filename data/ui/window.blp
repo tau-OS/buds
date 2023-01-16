@@ -23,13 +23,13 @@ template BudsWindow : He.ApplicationWindow {
           has-margins: false;
           show-buttons: bind album.folded;
           width-request: 250;
-          scroller: sw;
 
           Label {
             label: _("Contacts");
             margin-start: 18;
             margin-end: 18;
-            margin-top: 12;
+            margin-top: 18;
+            halign: start;
 
             styles [
                   "view-title",
@@ -42,7 +42,7 @@ template BudsWindow : He.ApplicationWindow {
             halign: end;
             margin-start: 18;
             margin-end: 18;
-            margin-top: 12;
+            margin-top: 16;
 
             ToggleButton search_button {
               icon-name: "system-search-symbolic";
