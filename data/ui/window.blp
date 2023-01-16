@@ -19,12 +19,22 @@ template BudsWindow : He.ApplicationWindow {
       Bis.AlbumPage {
         child:
         He.SideBar listgrid {
-          title: "Contacts";
           show-back: false;
           has-margins: false;
           show-buttons: bind album.folded;
           width-request: 250;
           scroller: sw;
+
+          Label {
+            label: _"Contacts";
+            margin-start: 18;
+            margin-end: 18;
+            margin-top: 12;
+
+            styles [
+                  "view-title",
+            ]
+          }
 
           Box {
             spacing: 12;
@@ -32,7 +42,7 @@ template BudsWindow : He.ApplicationWindow {
             halign: end;
             margin-start: 18;
             margin-end: 18;
-            margin-bottom: 6;
+            margin-top: 12;
 
             ToggleButton search_button {
               icon-name: "system-search-symbolic";
@@ -55,6 +65,7 @@ template BudsWindow : He.ApplicationWindow {
             margin-start: 18;
             margin-end: 18;
             margin-bottom: 6;
+            margin-top: 6;
             placeholder-text: _("Search contacts…");
             halign: start;
             visible: bind search_button.active;
