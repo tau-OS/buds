@@ -6,3 +6,7 @@
 .search {
   border-radius: 999px;
 }
+
+.disclosure-button button {
+  border-radius: 999px;
+}

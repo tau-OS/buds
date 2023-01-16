@@ -26,22 +26,35 @@ template BudsWindow : He.ApplicationWindow {
           width-request: 250;
           scroller: sw;
 
-          [titlebar-button]
-          MenuButton {
-            icon-name: "open-menu-symbolic";
-            menu-model: primary_menu;
-          }
+          Box {
+            spacing: 12;
+            hexpand: true;
+            halign: end;
+            margin-start: 18;
+            margin-end: 18;
+            margin-bottom: 6;
 
-          [titlebar-button]
-          ToggleButton search_button {
-            icon-name: "system-search-symbolic";
+            ToggleButton search_button {
+              icon-name: "system-search-symbolic";
+
+              styles [
+                "disclosure-button",
+              ]
+            }
+            MenuButton {
+              icon-name: "open-menu-symbolic";
+              menu-model: primary_menu;
+
+              styles [
+                "disclosure-button",
+              ]
+            }
           }
 
           SearchEntry search_entry {
             margin-start: 18;
             margin-end: 18;
             margin-bottom: 6;
-            margin-top: 6;
             placeholder-text: _("Search contacts…");
             halign: start;
             visible: bind search_button.active;
