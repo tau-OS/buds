@@ -23,42 +23,17 @@ template BudsWindow : He.ApplicationWindow {
           has-margins: false;
           show-buttons: bind album.folded;
           width-request: 250;
+          title: _("Contacts");
+          scroller: sw;
 
-          Label {
-            label: _("Contacts");
-            margin-start: 18;
-            margin-end: 18;
-            margin-top: 18;
-            halign: start;
-
-            styles [
-                  "view-title",
-            ]
+          [titlebar-button]
+          ToggleButton search_button {
+            icon-name: "system-search-symbolic";
           }
-
-          Box {
-            spacing: 12;
-            hexpand: true;
-            halign: end;
-            margin-start: 18;
-            margin-end: 18;
-            margin-top: 16;
-
-            ToggleButton search_button {
-              icon-name: "system-search-symbolic";
-
-              styles [
-                "disclosure-button",
-              ]
-            }
-            MenuButton {
-              icon-name: "open-menu-symbolic";
-              menu-model: primary_menu;
-
-              styles [
-                "disclosure-button",
-              ]
-            }
+          [titlebar-button]
+          MenuButton {
+            icon-name: "open-menu-symbolic";
+            menu-model: primary_menu;
           }
 
           SearchEntry search_entry {
