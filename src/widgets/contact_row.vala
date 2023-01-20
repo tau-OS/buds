@@ -42,8 +42,7 @@ namespace Buds {
                 image.text = "";
                 image.image = "file://" + individual.avatar.to_string ();
             } else {
-                var name1 = individual.structured_name;
-                image.text = name1.given_name.substring (0, 1).up () + name1.family_name.substring (0, 1).up ();
+                image.text = individual.display_name;
                 image.image = "";
             }
 
