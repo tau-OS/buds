@@ -219,10 +219,10 @@ namespace Buds {
     
             string header_string = null;
             if (name1 != null) {
-                if (name1.family_name != "" && name1.family_name.@get (0).isalpha ()) {
-                    header_string = name1.family_name.substring (0, 1).up ();
-                } else if (name1.given_name != "" && name1.given_name.@get (0).isalpha ()) {
-                    header_string = name1.given_name.substring (0, 1).up ();
+                if (name1.family_name != "") {
+                    header_string = name1.family_name;
+                } else if (name1.given_name != "") {
+                    header_string = name1.given_name;
                 } else {
                     header_string = _("#");
                 }
@@ -232,11 +232,11 @@ namespace Buds {
     
             if (name2 != null) {
                 if (name2.family_name != "") {
-                    if (name2.family_name.substring (0, 1).up () == header_string || !name2.family_name.@get (0).isalpha ()) {
+                    if (name2.family_name == header_string) {
                         return;
                     }
                 } else if (name2.given_name != "") {
-                    if (name2.given_name.substring (0, 1).up () == header_string || !name2.given_name.@get (0).isalpha ()) {
+                    if (name2.given_name == header_string) {
                         return;
                     }
                 }
