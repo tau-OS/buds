@@ -37,13 +37,15 @@ namespace Buds {
             title.add_css_class ("cb-title");
 
             image.size = 32;
+            image.text = individual.display_name;
+            image.image = null;
 
             if (individual.avatar != null) {
                 image.text = "";
                 image.image = "file://" + individual.avatar.to_string ();
             } else {
                 image.text = individual.display_name;
-                image.image = "";
+                image.image = null;
             }
 
             var main_box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 16);

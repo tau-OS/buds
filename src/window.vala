@@ -135,12 +135,15 @@ namespace Buds {
         public void setup_contact_info () {
             var contact = get_selected_contact ();
 
+            contact_image.text = contact.display_name;
+            contact_image.image = null;
+
             if (contact.avatar != null) {
-                contact_image.text = "";
+                contact_image.text = null;
                 contact_image.image = "file://" + contact.avatar.to_string ();
             } else {
                 contact_image.text = contact.display_name;
-                contact_image.image = "";
+                contact_image.image = null;
             }
             contact_name.label = contact.display_name;
 
