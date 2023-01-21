@@ -1,12 +1,3 @@
-.content-list row:selected,
-.content-list row:hover {
-  background: none;
-}
-
 .search {
-  border-radius: 999px;
-}
-
-.disclosure-button button {
   border-radius: 999px;
 }
