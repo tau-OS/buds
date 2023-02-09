@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gresources>
-  <gresource prefix="/co/tauos/Buds/">
+  <gresource prefix="/com/fyralabs/Buds/">
     <file compressed="true" preprocess="xml-stripblanks" alias="window.ui">ui/window.ui</file>
     <file compressed="true">style.css</file>
     <file compressed="true">style-dark.css</file>

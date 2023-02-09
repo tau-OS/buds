@@ -11,6 +11,6 @@ install_data(
 )
 
 install_data(
-  'co.tauos.Buds-symbolic.svg',
+  'com.fyralabs.Buds-symbolic.svg',
   install_dir: icondir / 'symbolic' / 'apps'
 )

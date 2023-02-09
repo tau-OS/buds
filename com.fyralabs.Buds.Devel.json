@@ -1,10 +1,11 @@
 {
-    "rename-icon" : "co.tauos.Buds",
-    "app-id": "co.tauos.Buds",
-    "runtime" : "co.tauos.Platform",
-    "runtime-version" : "stable",
-    "sdk" : "co.tauos.Sdk",
-    "command": "co.tauos.Buds",
+    "app-id": "com.fyralabs.Buds",
+    "rename-icon" : "com.fyralabs.Buds",
+    "command": "com.fyralabs.Buds",
+    "desktop-file-name-suffix" : " (Development)",
+    "runtime" : "com.fyralabs.Platform",
+    "runtime-version" : "daily",
+    "sdk" : "com.fyralabs.Sdk",
     "finish-args": [
         "--device=dri",
         "--share=ipc",
@@ -133,12 +134,6 @@
                 {
                     "type" : "dir",
                     "path" : "."
-                },
-                {
-                    "type": "git",
-                    "url": "https://gitlab.gnome.org/jwestman/blueprint-compiler.git",
-                    "branch": "main",
-                    "dest": "./subprojects/blueprint-compiler"
                 }
             ]
         }

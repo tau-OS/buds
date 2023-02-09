@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop-application">
-  <id>co.tauos.Buds</id>
+  <id>com.fyralabs.Buds</id>
   <metadata_license>CC0</metadata_license>
   <project_license>GPL-3.0-or-later</project_license>
   <name>Buds</name>
@@ -26,5 +26,5 @@
   <developer_name>Jamie Murphy</developer_name>
   <update_contact>hello@itsjamie.dev</update_contact>
   <translation type="gettext">buds</translation>
-  <launchable type="desktop-id">co.tauos.Buds.desktop</launchable>
+  <launchable type="desktop-id">com.fyralabs.Buds.desktop</launchable>
 </component>

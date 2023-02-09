@@ -17,7 +17,7 @@
  */
 
 namespace Buds {
-    [GtkTemplate (ui = "/co/tauos/Buds/window.ui")]
+    [GtkTemplate (ui = "/com/fyralabs/Buds/window.ui")]
     public class Window : He.ApplicationWindow {
         [GtkChild]
         private unowned Gtk.ListBox contacts_listbox;

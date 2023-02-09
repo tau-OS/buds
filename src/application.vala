@@ -40,7 +40,7 @@ namespace Buds {
             accent_color.parse("#56BFA6");
             default_accent_color = He.Color.from_gdk_rgba(accent_color);
 
-            resource_base_path = "/co/tauos/Buds";
+            resource_base_path = "/com/fyralabs/Buds";
 
             base.startup ();
 
@@ -58,9 +58,9 @@ namespace Buds {
             new He.AboutWindow (
                 this.active_window,
                 "Buds" + Config.NAME_SUFFIX,
-                "co.tauos.Buds",
+                "com.fyralabs.Buds",
                 Config.VERSION,
-                "co.tauos.Buds",
+                "com.fyralabs.Buds",
                 "",
                 "",
                 "",

@@ -1,6 +1,6 @@
-data/co.tauos.Buds.desktop.in
-data/co.tauos.Buds.appdata.xml.in
-data/co.tauos.Buds.gschema.xml
+data/com.fyralabs.Buds.desktop.in
+data/com.fyralabs.Buds.appdata.xml.in
+data/com.fyralabs.Buds.gschema.xml
 data/ui/window.ui
 src/application.vala
 src/window.vala

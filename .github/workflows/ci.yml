@@ -27,7 +27,7 @@ jobs:
       name: "Build"
       with:
         bundle: buds.flatpak
-        manifest-path: co.tauos.Buds.json
+        manifest-path: com.fyralabs.Buds.json
         cache-key: flatpak-builder-${{ github.sha }}
         repository-name: catalogue
         repository-url: https://repo.tauos.co/catalogue.flatpakrepo

@@ -1,4 +1,4 @@
-<img align="left" style="vertical-align: middle" width="120" height="120" src="data/icons/co.tauos.Buds.svg">
+<img align="left" style="vertical-align: middle" width="120" height="120" src="data/icons/com.fyralabs.Buds.svg">
 
 # Buds
 
@@ -41,5 +41,5 @@ To install, use `ninja install`, then execute with `buds`.
 
 ```bash
 $ sudo ninja install
-$ co.tauos.Buds
+$ com.fyralabs.Buds
 ```
