@@ -54,7 +54,7 @@ namespace Buds {
         }
 
         private void on_about_action () {
-            string[] developers = { "Lains" };
+            string[] developers = { "Fyra Labs" };
             new He.AboutWindow (
                 this.active_window,
                 "Buds" + Config.NAME_SUFFIX,
