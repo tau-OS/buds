@@ -58,9 +58,9 @@ namespace Buds {
             new He.AboutWindow (
                 this.active_window,
                 "Buds" + Config.NAME_SUFFIX,
-                "co.tauos.Buds",
+                "com.fyralabs.Buds",
                 Config.VERSION,
-                "co.tauos.Buds",
+                "com.fyralabs.Buds",
                 "",
                 "",
                 "",
