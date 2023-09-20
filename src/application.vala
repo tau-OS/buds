@@ -67,7 +67,7 @@ namespace Buds {
                 {},
                 developers,
                 2022,
-                He.AboutWindow.Licenses.GPLv3,
+                He.AboutWindow.Licenses.GPLV3,
                 He.Colors.MINT
             ).present ();
         }
