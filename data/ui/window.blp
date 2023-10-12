@@ -2,7 +2,7 @@ using Gtk 4.0;
 using He 1;
 using Bis 1;
 
-template BudsWindow : He.ApplicationWindow {
+template $BudsWindow : He.ApplicationWindow {
   default-width: 800;
   default-height: 600;
   width-request: 360;
@@ -21,7 +21,7 @@ template BudsWindow : He.ApplicationWindow {
         He.SideBar listgrid {
           show-back: false;
           has-margins: false;
-          show-buttons: bind album.folded;
+          show-left-title-buttons: bind album.folded;
           width-request: 250;
           title: _("Contacts");
           scroller: sw;
@@ -81,7 +81,8 @@ template BudsWindow : He.ApplicationWindow {
           ]
 
           He.AppBar info_title {
-            show-buttons: true;
+            show-left-title-buttons: bind album.folded;
+            show-right-title-buttons: true;
             show-back: bind album.folded;
           }
 
