@@ -21,7 +21,8 @@ template $BudsWindow : He.ApplicationWindow {
         He.SideBar listgrid {
           show-back: false;
           has-margins: false;
-          show-left-title-buttons: bind album.folded;
+          show-left-title-buttons: true;
+          show-right-title-buttons: bind album.folded;
           width-request: 250;
           title: _("Contacts");
           scroller: sw;
