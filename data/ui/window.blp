@@ -6,7 +6,7 @@ template $BudsWindow : He.ApplicationWindow {
   default-width: 800;
   default-height: 600;
   width-request: 360;
-  height-request: 266;
+  height-request: 294;
 
   Box {
     orientation: vertical;
@@ -85,6 +85,7 @@ template $BudsWindow : He.ApplicationWindow {
             show-left-title-buttons: bind album.folded;
             show-right-title-buttons: true;
             show-back: bind album.folded;
+            viewtitle-label: "";
           }
 
           Stack stack {

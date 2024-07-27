@@ -21,7 +21,7 @@ namespace Buds {
         public Folks.Individual individual { get; construct; }
 
         private Gtk.Label title = new Gtk.Label ("");
-        private He.Avatar image = new He.Avatar (-1, "", "");
+        private He.Avatar image = new He.Avatar (-1, "", "", false);
         public bool selected { get; set; }
 
         public ContactRow (Folks.Individual individual, bool selected) {
