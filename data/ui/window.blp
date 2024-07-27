@@ -27,11 +27,11 @@ template $BudsWindow : He.ApplicationWindow {
           title: _("Contacts");
           scroller: sw;
 
-          [titlebar-button]
+          [titlebar-toggle]
           ToggleButton search_button {
             icon-name: "system-search-symbolic";
           }
-          [titlebar-button]
+          [titlebar-menu]
           MenuButton {
             icon-name: "open-menu-symbolic";
             menu-model: primary_menu;
