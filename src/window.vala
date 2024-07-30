@@ -46,9 +46,9 @@ namespace Buds {
         [GtkChild]
         private unowned He.EmptyPage empty_page;
         [GtkChild]
-        private unowned He.DisclosureButton phone_button;
+        private unowned He.Button phone_button;
         [GtkChild]
-        private unowned He.DisclosureButton email_button;
+        private unowned He.Button email_button;
 
         public Core.Store store = Core.Store.get_default ();
 

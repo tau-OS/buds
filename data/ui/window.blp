@@ -76,7 +76,7 @@ template $BudsWindow : He.ApplicationWindow {
           orientation: vertical;
           spacing: 0;
           hexpand: true;
-          
+
           styles [
                 "main-view",
           ]
@@ -136,8 +136,9 @@ template $BudsWindow : He.ApplicationWindow {
                       title: _("Phone");
                       icon: "phone-symbolic";
 
-                      He.DisclosureButton phone_button {
+                      He.Button phone_button {
                         icon: "edit-copy-symbolic";
+                        is-disclosure: true;
                       }
                     }
 
@@ -145,9 +146,10 @@ template $BudsWindow : He.ApplicationWindow {
                       visible: false;
                       title: _("Email");
                       icon: "mail-archive-symbolic";
-                      
-                      He.DisclosureButton email_button {
+
+                      He.Button email_button {
                         icon: "edit-copy-symbolic";
+                        is-disclosure: true;
                       }
                     }
 
