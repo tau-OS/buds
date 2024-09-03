@@ -24,7 +24,9 @@ template $BudsWindow : He.ApplicationWindow {
           show-left-title-buttons: true;
           show-right-title-buttons: bind album.folded;
           width-request: 250;
-          title: _("Contacts");
+          title: He.ViewTitle {
+            label: _("Contacts");
+          };
           scroller: sw;
 
           [titlebar-toggle]
@@ -48,6 +50,7 @@ template $BudsWindow : He.ApplicationWindow {
 
             styles [
                 "search",
+                "text-field"
             ]
           }
 
@@ -85,7 +88,6 @@ template $BudsWindow : He.ApplicationWindow {
             show-left-title-buttons: bind album.folded;
             show-right-title-buttons: true;
             show-back: bind album.folded;
-            viewtitle-label: "";
           }
 
           Stack stack {
