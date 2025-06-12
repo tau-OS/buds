@@ -49,6 +49,8 @@ namespace Buds {
         private unowned He.Button phone_button;
         [GtkChild]
         private unowned He.Button email_button;
+        [GtkChild]
+        private unowned Gtk.Overlay about_overlay;
 
         public Core.Store store = Core.Store.get_default ();
 
@@ -62,7 +64,7 @@ namespace Buds {
         }
 
         public Window (Buds.Application app) {
-            Object (application: app);
+            Object (application : app);
 
             contacts_listbox.bind_model (store.filter_model, create_row_for_item_cb);
             contacts_listbox.set_filter_func (filter_function);
@@ -218,7 +220,7 @@ namespace Buds {
             if (row2 != null) {
                 name2 = ((Buds.ContactRow) row2).individual.structured_name;
             }
-    
+
             string header_string = null;
             if (name1 != null) {
                 if (name1.family_name != "" && name1.family_name.@get (0).isalpha ()) {
@@ -231,7 +233,7 @@ namespace Buds {
             } else if (name2 != null) {
                 header_string = _("#");
             }
-    
+
             if (name2 != null) {
                 if (name2.family_name != "") {
                     if (name2.family_name.substring (0, 1).up () == header_string || !name2.family_name.@get (0).isalpha ()) {
@@ -243,7 +245,7 @@ namespace Buds {
                     }
                 }
             }
-    
+
             if (header_string != null) {
                 var header_label = new Gtk.Label (header_string) {
                     halign = Gtk.Align.START,

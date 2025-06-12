@@ -18,10 +18,12 @@
 
 namespace Buds {
     public class Application : He.Application {
+        private Window window;
+
         public Application () {
             Object (
-                application_id: Config.APP_ID,
-                flags: ApplicationFlags.FLAGS_NONE
+                    application_id: Config.APP_ID,
+                    flags: ApplicationFlags.FLAGS_NONE
             );
         }
 
@@ -32,13 +34,13 @@ namespace Buds {
                 { "quit", this.quit }
             };
             this.add_action_entries (action_entries, this);
-            this.set_accels_for_action ("app.quit", {"<primary>q"});
+            this.set_accels_for_action ("app.quit", { "<primary>q" });
         }
 
         protected override void startup () {
             Gdk.RGBA accent_color = { 0 };
-            accent_color.parse("#56BFA6");
-            default_accent_color = He.from_gdk_rgba(accent_color);
+            accent_color.parse ("#56BFA6");
+            default_accent_color = He.from_gdk_rgba (accent_color);
 
             resource_base_path = "/com/fyralabs/Buds";
 
@@ -46,7 +48,7 @@ namespace Buds {
 
             Bis.init ();
 
-            new Buds.Window (this);
+            window = new Buds.Window (this);
         }
 
         protected override void activate () {
@@ -55,21 +57,23 @@ namespace Buds {
 
         private void on_about_action () {
             string[] developers = { "Fyra Labs" };
-            new He.AboutWindow (
-                this.active_window,
-                "Buds" + Config.NAME_SUFFIX,
-                "com.fyralabs.Buds",
-                Config.VERSION,
-                "com.fyralabs.Buds",
-                "",
-                "",
-                "",
-                {},
-                developers,
-                2022,
-                He.AboutWindow.Licenses.GPLV3,
-                He.Colors.MINT
-            ).present ();
+            var awindow = new He.AboutWindow (
+                                              this.active_window,
+                                              "Buds" + Config.NAME_SUFFIX,
+                                              "com.fyralabs.Buds",
+                                              Config.VERSION,
+                                              "com.fyralabs.Buds",
+                                              "",
+                                              "",
+                                              "",
+                                              {},
+                                              developers,
+                                              2022,
+                                              He.AboutWindow.Licenses.GPLV3,
+                                              He.Colors.MINT
+            );
+            window.about_overlay.add_overlay (awindow);
+            awindow.present ();
         }
 
         private void on_preferences_action () {
