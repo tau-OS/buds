@@ -50,7 +50,7 @@ namespace Buds {
         [GtkChild]
         private unowned He.Button email_button;
         [GtkChild]
-        private unowned Gtk.Overlay about_overlay;
+        public unowned Gtk.Overlay about_overlay;
 
         public Core.Store store = Core.Store.get_default ();
 
