@@ -2,3 +2,4 @@
 build/
 .flatpak/
 _build/
+builddir/

@@ -18,7 +18,22 @@
 
 namespace Buds.Core {
     public class QueryFilter : Gtk.Filter {
-        public Folks.Query query { get; construct; }
+        private Folks.Query _query;
+        public Folks.Query query {
+            get {
+                return _query;
+            }
+            set {
+                if (_query != null) {
+                    _query.notify.disconnect (on_query_notify);
+                }
+                _query = value;
+                if (_query != null) {
+                    _query.notify.connect (on_query_notify);
+                }
+                changed (Gtk.FilterChange.DIFFERENT);
+            }
+        }
 
         private uint _min_strength = 0;
         public uint min_strength {
@@ -36,9 +51,8 @@ namespace Buds.Core {
         }
 
         public QueryFilter (Folks.Query query) {
-            Object (query: query);
-
-            query.notify.connect (on_query_notify);
+            Object ();
+            this.query = query;
         }
 
         private void on_query_notify (Object object, ParamSpec pspec) {
@@ -49,6 +63,16 @@ namespace Buds.Core {
             unowned var individual = item as Folks.Individual;
             if (individual == null) {
                 return false;
+            }
+
+            // Filter out contacts without structured name and not favorites
+            if (individual.structured_name == null && !individual.is_favourite) {
+                return false;
+            }
+
+            // If there's no search query, show all valid contacts
+            if (query.match_fields == null) {
+                return true;
             }
 
             return query.is_match (individual) > min_strength;
@@ -68,23 +92,23 @@ namespace Buds.Core {
         public override Gtk.Ordering compare (Object? item1, Object? item2) {
             unowned var a = item1 as Folks.Individual;
             if (a == null)
-            return Gtk.Ordering.SMALLER;
+                return Gtk.Ordering.SMALLER;
 
             unowned var b = item2 as Folks.Individual;
             if (b == null)
-            return Gtk.Ordering.LARGER;
+                return Gtk.Ordering.LARGER;
 
             // Always prefer favourites over non-favourites.
             if (a.is_favourite != b.is_favourite)
-            return a.is_favourite? Gtk.Ordering.SMALLER : Gtk.Ordering.LARGER;
+                return a.is_favourite ? Gtk.Ordering.SMALLER : Gtk.Ordering.LARGER;
 
             // Both are (non-)favourites: sort by either first name or surname
-            unowned var a_name = sort_on_surname? try_get_surname (a) : a.display_name;
-            unowned var b_name = sort_on_surname? try_get_surname (b) : b.display_name;
+            unowned var a_name = sort_on_surname ? try_get_surname (a) : a.display_name;
+            unowned var b_name = sort_on_surname ? try_get_surname (b) : b.display_name;
 
             int names_cmp = a_name.collate (b_name);
             if (names_cmp != 0)
-            return Gtk.Ordering.from_cmpfunc (names_cmp);
+                return Gtk.Ordering.from_cmpfunc (names_cmp);
 
             // Since we want total ordering, compare uuids as a last resort
             return Gtk.Ordering.from_cmpfunc (strcmp (a.id, b.id));
@@ -92,7 +116,7 @@ namespace Buds.Core {
 
         private unowned string try_get_surname (Folks.Individual indiv) {
             if (indiv.structured_name != null && indiv.structured_name.family_name != "")
-            return indiv.structured_name.family_name;
+                return indiv.structured_name.family_name;
 
             // Fall back to the display_name
             return indiv.display_name;

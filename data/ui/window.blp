@@ -4,7 +4,7 @@ using Bis 1;
 
 template $BudsWindow : He.ApplicationWindow {
   default-width: 800;
-  default-height: 600;
+  default-height: 660;
   width-request: 360;
   height-request: 294;
 
@@ -25,7 +25,7 @@ template $BudsWindow : He.ApplicationWindow {
             has-margins: false;
             show-left-title-buttons: true;
             show-right-title-buttons: bind album.folded;
-            width-request: 250;
+            width-request: 330;
             title: He.ViewTitle {
               label: _("Contacts");
             };
@@ -36,7 +36,7 @@ template $BudsWindow : He.ApplicationWindow {
               icon-name: "system-search-symbolic";
             }
             [titlebar-menu]
-            MenuButton {
+            MenuButton menu_button {
               icon-name: "open-menu-symbolic";
               menu-model: primary_menu;
             }
@@ -56,19 +56,24 @@ template $BudsWindow : He.ApplicationWindow {
               ]
             }
 
-            ScrolledWindow sw {
-              hscrollbar-policy: never;
-              vexpand: true;
+            He.OverlayButton add_button {
+              icon: "list-add-symbolic";
+              typeb: primary;
 
-              ListBox contacts_listbox {
-                selection-mode: single;
-                margin-start: 18;
-                margin-end: 18;
-                row-activated => $item_activated();
+              ScrolledWindow sw {
+                hscrollbar-policy: never;
+                vexpand: true;
 
-                styles [
-                  "content-list",
-                ]
+                ListBox contacts_listbox {
+                  selection-mode: single;
+                  margin-start: 18;
+                  margin-end: 18;
+                  row-activated => $item_activated();
+
+                  styles [
+                    "content-list",
+                  ]
+                }
               }
             }
           }
@@ -90,6 +95,13 @@ template $BudsWindow : He.ApplicationWindow {
               show-left-title-buttons: bind album.folded;
               show-right-title-buttons: true;
               show-back: bind album.folded;
+
+              viewtitle-widget: Gtk.Box {};
+
+              [titlebar-button]
+              He.Button edit_button {
+                icon: "document-edit-symbolic";
+              }
             }
 
             Stack stack {
@@ -139,6 +151,7 @@ template $BudsWindow : He.ApplicationWindow {
                         visible: false;
                         title: _("Phone");
                         icon: "phone-symbolic";
+                        layout: horizontal;
 
                         He.Button phone_button {
                           icon: "edit-copy-symbolic";
@@ -150,6 +163,7 @@ template $BudsWindow : He.ApplicationWindow {
                         visible: false;
                         title: _("Email");
                         icon: "mail-archive-symbolic";
+                        layout: horizontal;
 
                         He.Button email_button {
                           icon: "edit-copy-symbolic";
@@ -161,6 +175,7 @@ template $BudsWindow : He.ApplicationWindow {
                         visible: false;
                         title: _("Birthday");
                         icon: "x-office-calendar-symbolic";
+                        layout: horizontal;
                       }
                     }
                   }

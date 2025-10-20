@@ -50,6 +50,17 @@ namespace Buds.Core {
 
         public Gtk.SingleSelection selection { get; private set; }
 
+        private Folks.SimpleQuery _query;
+
+        public void update_query (string search_term) {
+            string[] filtered_fields = Folks.Query.MATCH_FIELDS_NAMES;
+            foreach (unowned var field in Folks.Query.MATCH_FIELDS_ADDRESSES) {
+                filtered_fields += field;
+            }
+            _query = new Folks.SimpleQuery (search_term, filtered_fields);
+            filter.query = _query;
+        }
+
         construct {
             // Setup Backends
             var backend_store = Folks.BackendStore.dup ();
@@ -68,7 +79,18 @@ namespace Buds.Core {
             // Setup Individual Aggregator
             aggregator = Folks.IndividualAggregator.dup_with_backend_store (backend_store);
             aggregator.individuals_changed_detailed.connect (on_individuals_changed_detailed_cb);
-            aggregator.prepare.begin ();
+
+            prepare_aggregator.begin ();
+        }
+
+        private async void prepare_aggregator () {
+            try {
+                yield aggregator.prepare ();
+
+                debug ("Aggregator prepared successfully");
+            } catch (Error e) {
+                warning ("Failed to prepare aggregator: %s", e.message);
+            }
         }
 
         public Store () {
@@ -77,11 +99,11 @@ namespace Buds.Core {
             foreach (unowned var field in Folks.Query.MATCH_FIELDS_ADDRESSES) {
                 filtered_fields += field;
             }
-            var query = new Folks.SimpleQuery ("", filtered_fields);
+            _query = new Folks.SimpleQuery ("", filtered_fields);
 
             sorter = new IndividualSorter ();
             sort_model = new Gtk.SortListModel (base_model, sorter);
-            filter = new QueryFilter (query);
+            filter = new QueryFilter (_query);
             filter_model = new Gtk.FilterListModel (sort_model, filter);
             selection = new Gtk.SingleSelection (filter_model);
             selection.autoselect = false;
@@ -111,7 +133,7 @@ namespace Buds.Core {
 
             foreach (unowned var indiv in to_add) {
                 if (indiv.personas.size == 0) {
-                  to_add.remove_fast (indiv);
+                    to_add.remove_fast (indiv);
                 } else {
                     indiv.notify.connect ((obj, pspec) => {
                         unowned var prop_name = pspec.get_name ();
@@ -127,6 +149,104 @@ namespace Buds.Core {
                 }
             }
             _base_model.splice (base_model.get_n_items (), 0, (Object[]) to_add.data);
+        }
+
+        public async void add_contact (string given_name, string family_name, string? phone = null, string? email = null, DateTime? birthday = null, string? avatar_path = null) throws Error {
+            var primary_store = get_primary_store ();
+            if (primary_store == null) {
+                throw new IOError.NOT_FOUND ("No writeable persona store found");
+            }
+
+            var details = new HashTable<string, Value?> (str_hash, str_equal);
+
+            var full_name_value = Value (typeof (string));
+            var full_name = (family_name != "" ? family_name + " " : "") + given_name;
+            full_name_value.set_string (full_name);
+            details.insert ("full-name", full_name_value);
+
+            var structured_name = new Folks.StructuredName (family_name, given_name, null, null, null);
+            var structured_name_value = Value (typeof (Folks.StructuredName));
+            structured_name_value.set_object (structured_name);
+            details.insert ("structured-name", structured_name_value);
+
+            if (phone != null && phone != "") {
+                var phone_set = new Gee.HashSet<Folks.PhoneFieldDetails> ();
+                var phone_details = new Folks.PhoneFieldDetails (phone);
+                phone_set.add (phone_details);
+                var phone_value = Value (typeof (Gee.Set));
+                phone_value.set_object (phone_set);
+                details.insert ("phone-numbers", phone_value);
+            }
+
+            if (email != null && email != "") {
+                var email_set = new Gee.HashSet<Folks.EmailFieldDetails> ();
+                var email_details = new Folks.EmailFieldDetails (email);
+                email_set.add (email_details);
+                var email_value = Value (typeof (Gee.Set));
+                email_value.set_object (email_set);
+                details.insert ("email-addresses", email_value);
+            }
+
+            if (birthday != null) {
+                var bday_value = Value (typeof (DateTime));
+                bday_value.set_boxed (birthday);
+                details.insert ("birthday", bday_value);
+            }
+
+            if (avatar_path != null && avatar_path != "") {
+                var avatar_file = File.new_for_path (avatar_path);
+                var avatar_icon = new FileIcon (avatar_file);
+                var avatar_value = Value (typeof (LoadableIcon));
+                avatar_value.set_object (avatar_icon);
+                details.insert ("avatar", avatar_value);
+            }
+
+            yield aggregator.add_persona_from_details (null, primary_store, details);
+        }
+
+        public async void update_contact (Folks.Individual individual, string given_name, string family_name, string? phone = null, string? email = null, DateTime? birthday = null, string? avatar_path = null) throws Error {
+            var full_name = (family_name != "" ? family_name + " " : "") + given_name;
+            if (individual is Folks.NameDetails) {
+                var structured_name = new Folks.StructuredName (family_name, given_name, null, null, null);
+                yield ((Folks.NameDetails) individual).change_structured_name (structured_name);
+                yield ((Folks.NameDetails) individual).change_full_name (full_name);
+            }
+
+            if (individual is Folks.PhoneDetails) {
+                var phone_set = new Gee.HashSet<Folks.PhoneFieldDetails> ();
+                if (phone != null && phone != "") {
+                    phone_set.add (new Folks.PhoneFieldDetails (phone));
+                }
+                yield ((Folks.PhoneDetails) individual).change_phone_numbers (phone_set);
+            }
+
+            if (individual is Folks.EmailDetails) {
+                var email_set = new Gee.HashSet<Folks.EmailFieldDetails> ();
+                if (email != null && email != "") {
+                    email_set.add (new Folks.EmailFieldDetails (email));
+                }
+                yield ((Folks.EmailDetails) individual).change_email_addresses (email_set);
+            }
+
+            if (individual is Folks.BirthdayDetails && birthday != null) {
+                yield ((Folks.BirthdayDetails) individual).change_birthday (birthday);
+            }
+
+            if (individual is Folks.AvatarDetails && avatar_path != null && avatar_path != "") {
+                var avatar_file = File.new_for_path (avatar_path);
+                var avatar_icon = new FileIcon (avatar_file);
+                yield ((Folks.AvatarDetails) individual).change_avatar (avatar_icon);
+            }
+        }
+
+        private Folks.PersonaStore? get_primary_store () {
+            for (uint i = 0; i < _address_books.get_n_items (); i++) {
+                var store = (Folks.PersonaStore) _address_books.get_item (i);
+                if (store.can_add_personas == Folks.MaybeBool.TRUE) {
+                    return store;
+                }
+            }
+            return null;
         }
 
         private static GLib.Once<Store> instance;

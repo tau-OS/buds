@@ -51,6 +51,12 @@ namespace Buds {
         private unowned He.Button email_button;
         [GtkChild]
         public unowned Gtk.Overlay about_overlay;
+        [GtkChild]
+        private unowned He.Button edit_button;
+        [GtkChild]
+        private unowned He.OverlayButton add_button;
+        [GtkChild]
+        private unowned Gtk.MenuButton menu_button;
 
         public Core.Store store = Core.Store.get_default ();
 
@@ -67,9 +73,6 @@ namespace Buds {
             Object (application : app);
 
             contacts_listbox.bind_model (store.filter_model, create_row_for_item_cb);
-            contacts_listbox.set_filter_func (filter_function);
-            contacts_listbox.set_header_func (header_function);
-            contacts_listbox.set_sort_func (sort_function);
 
             info_title.back_button.clicked.connect (() => {
                 if (album.folded) {
@@ -78,7 +81,7 @@ namespace Buds {
             });
 
             search_entry.search_changed.connect (() => {
-                contacts_listbox.invalidate_filter ();
+                update_search_filter ();
             });
 
             empty_page.action_button.visible = false;
@@ -100,6 +103,241 @@ namespace Buds {
                 unowned var clipboard = display.get_clipboard ();
                 clipboard.set_text (ext_txt);
             });
+
+            edit_button.clicked.connect (() => {
+                show_edit_contact_dialog ();
+            });
+
+            add_button.clicked.connect (() => {
+                show_add_contact_dialog ();
+            });
+
+            edit_button.visible = false;
+            menu_button.get_popover ().has_arrow = false;
+        }
+
+        private void update_search_filter () {
+            var search_term = search_entry.text.strip ();
+            store.update_query (search_term);
+        }
+
+        private void show_add_contact_dialog () {
+            var dialog = new He.Dialog (this, _("Add Contact"), _("Create a new contact"), "", null, null);
+
+            string? selected_avatar_path = null;
+
+            var avatar_button = new Gtk.Button () {
+                width_request = 96,
+                height_request = 96,
+                halign = Gtk.Align.CENTER
+            };
+            avatar_button.add_css_class ("circular");
+
+            var avatar_image = new He.Avatar (96, "", "", false);
+            avatar_button.set_child (avatar_image);
+
+            avatar_button.clicked.connect (() => {
+                var file_dialog = new Gtk.FileDialog () {
+                    title = _("Select Contact Picture"),
+                    modal = true
+                };
+
+                var filter = new Gtk.FileFilter ();
+                filter.set_filter_name ("Image Files");
+                filter.add_mime_type ("image/*");
+
+                var filters = new ListStore (typeof (Gtk.FileFilter));
+                filters.append (filter);
+                file_dialog.filters = filters;
+
+                file_dialog.open.begin (this, null, (obj, res) => {
+                    try {
+                        var file = file_dialog.open.end (res);
+                        if (file != null) {
+                            selected_avatar_path = file.get_path ();
+                            avatar_image.image = "file://" + selected_avatar_path;
+                        }
+                    } catch (Error e) {
+                        // User cancelled
+                    }
+                });
+            });
+
+            var given_name_entry = new Gtk.Entry ();
+            given_name_entry.placeholder_text = _("First Name");
+            given_name_entry.add_css_class ("text-field");
+
+            var family_name_entry = new Gtk.Entry ();
+            family_name_entry.placeholder_text = _("Last Name");
+            family_name_entry.add_css_class ("text-field");
+
+            var phone_entry = new Gtk.Entry ();
+            phone_entry.placeholder_text = _("Phone Number");
+            phone_entry.add_css_class ("text-field");
+
+            var email_entry = new Gtk.Entry ();
+            email_entry.placeholder_text = _("Email Address");
+            email_entry.add_css_class ("text-field");
+
+            dialog.add (avatar_button);
+            dialog.add (given_name_entry);
+            dialog.add (family_name_entry);
+            dialog.add (phone_entry);
+            dialog.add (email_entry);
+
+            var add_button = new He.Button ("", _("Add")) {
+                is_pill = true
+            };
+
+            dialog.cancel_button.clicked.connect (() => {
+                dialog.hide_dialog ();
+            });
+
+            add_button.clicked.connect (() => {
+                var given_name = given_name_entry.text;
+                var family_name = family_name_entry.text;
+                var phone = phone_entry.text;
+                var email = email_entry.text;
+
+                if (given_name == "" && family_name == "") {
+                    return;
+                }
+
+                store.add_contact.begin (given_name, family_name, phone, email, null, selected_avatar_path, (obj, res) => {
+                    try {
+                        store.add_contact.end (res);
+                        dialog.hide_dialog ();
+                    } catch (Error e) {
+                        warning ("Failed to add contact: %s", e.message);
+                    }
+                });
+            });
+
+            dialog.primary_button = add_button;
+            dialog.present ();
+        }
+
+        private void show_edit_contact_dialog () {
+            var contact = get_selected_contact ();
+            if (contact == null)return;
+
+            var dialog = new He.Dialog (this, _("Edit Contact"), _("Modify contact details"), "", null, null);
+
+            string? selected_avatar_path = null;
+
+            var avatar_button = new Gtk.Button () {
+                width_request = 96,
+                height_request = 96,
+                halign = Gtk.Align.CENTER
+            };
+            avatar_button.add_css_class ("circular");
+
+            var avatar_image = new He.Avatar (96, "", "", false);
+
+            // Set current avatar if exists
+            if (contact.avatar != null) {
+                avatar_image.image = "file://" + contact.avatar.to_string ();
+            } else {
+                avatar_image.text = contact.display_name;
+            }
+
+            avatar_button.set_child (avatar_image);
+
+            avatar_button.clicked.connect (() => {
+                var file_dialog = new Gtk.FileDialog () {
+                    title = _("Select Contact Picture"),
+                    modal = true
+                };
+
+                var filter = new Gtk.FileFilter ();
+                filter.set_filter_name ("Image Files");
+                filter.add_mime_type ("image/*");
+
+                var filters = new ListStore (typeof (Gtk.FileFilter));
+                filters.append (filter);
+                file_dialog.filters = filters;
+
+                file_dialog.open.begin (this, null, (obj, res) => {
+                    try {
+                        var file = file_dialog.open.end (res);
+                        if (file != null) {
+                            selected_avatar_path = file.get_path ();
+                            avatar_image.image = "file://" + selected_avatar_path;
+                        }
+                    } catch (Error e) {
+                        // User cancelled
+                    }
+                });
+            });
+
+            var given_name_entry = new Gtk.Entry ();
+            given_name_entry.placeholder_text = _("First Name");
+            given_name_entry.add_css_class ("text-field");
+
+            var family_name_entry = new Gtk.Entry ();
+            family_name_entry.placeholder_text = _("Last Name");
+            family_name_entry.add_css_class ("text-field");
+
+            var phone_entry = new Gtk.Entry ();
+            phone_entry.placeholder_text = _("Phone Number");
+            phone_entry.add_css_class ("text-field");
+
+            var email_entry = new Gtk.Entry ();
+            email_entry.placeholder_text = _("Email Address");
+            email_entry.add_css_class ("text-field");
+
+            if (contact.structured_name != null) {
+                given_name_entry.text = contact.structured_name.given_name ?? "";
+                family_name_entry.text = contact.structured_name.family_name ?? "";
+            }
+
+            if (contact.phone_numbers != null && contact.phone_numbers.size > 0) {
+                var first_phone = contact.phone_numbers.to_array ()[0];
+                phone_entry.text = first_phone.get_normalised ();
+            }
+
+            if (contact.email_addresses != null && contact.email_addresses.size > 0) {
+                var first_email = contact.email_addresses.to_array ()[0];
+                email_entry.text = first_email.value;
+            }
+
+            dialog.add (avatar_button);
+            dialog.add (given_name_entry);
+            dialog.add (family_name_entry);
+            dialog.add (phone_entry);
+            dialog.add (email_entry);
+
+            var save_button = new He.Button ("", _("Save")) {
+                is_pill = true
+            };
+
+            dialog.cancel_button.clicked.connect (() => {
+                dialog.hide_dialog ();
+            });
+
+            save_button.clicked.connect (() => {
+                var given_name = given_name_entry.text;
+                var family_name = family_name_entry.text;
+                var phone = phone_entry.text;
+                var email = email_entry.text;
+
+                if (given_name == "" && family_name == "") {
+                    return;
+                }
+
+                store.update_contact.begin (contact, given_name, family_name, phone, email, null, selected_avatar_path, (obj, res) => {
+                    try {
+                        store.update_contact.end (res);
+                        setup_contact_info ();
+                        dialog.hide_dialog ();
+                    } catch (Error e) {
+                        warning ("Failed to update contact: %s", e.message);
+                    }
+                });
+            });
+
+            dialog.primary_button = save_button;
+            dialog.present ();
         }
 
         private Gtk.Widget create_row_for_item_cb (Object obj) {
@@ -120,8 +358,10 @@ namespace Buds {
             if (row.selected) {
                 selected_row = row;
                 setup_contact_info ();
+                edit_button.visible = true;
             } else {
                 selected_row = null;
+                edit_button.visible = false;
             }
 
             album.set_visible_child (info);
@@ -149,17 +389,16 @@ namespace Buds {
             }
             contact_name.label = contact.display_name;
 
-            if (contact.phone_numbers != null) {
+            if (contact.phone_numbers != null && contact.phone_numbers.size > 0) {
                 string[] phones = {};
                 phone_block.subtitle = "";
-                int i;
                 foreach (var num in contact.phone_numbers) {
                     phones += num.get_normalised ();
                 }
-                for (i = 0; i <= contact.phone_numbers.size; i++) {
-                    if (i == contact.phone_numbers.size) {
-                        phone_block.subtitle += phones[i];
-                    } else if (i != contact.phone_numbers.size) {
+                for (int i = 0; i < phones.length; i++) {
+                    if (i == 0) {
+                        phone_block.subtitle = phones[i];
+                    } else {
                         phone_block.subtitle += "\n" + phones[i];
                     }
                 }
@@ -168,17 +407,16 @@ namespace Buds {
                 phone_block.visible = false;
             }
 
-            if (contact.email_addresses != null) {
+            if (contact.email_addresses != null && contact.email_addresses.size > 0) {
                 string[] emails = {};
                 email_block.subtitle = "";
-                int j;
                 foreach (var mail in contact.email_addresses) {
                     emails += mail.value;
                 }
-                for (j = 0; j <= contact.email_addresses.size; j++) {
-                    if (j == contact.email_addresses.size) {
-                        email_block.subtitle += emails[j];
-                    } else if (j != contact.email_addresses.size) {
+                for (int j = 0; j < emails.length; j++) {
+                    if (j == 0) {
+                        email_block.subtitle = emails[j];
+                    } else {
                         email_block.subtitle += "\n" + emails[j];
                     }
                 }
@@ -190,105 +428,11 @@ namespace Buds {
             var bday = contact.birthday;
 
             if (bday != null) {
-                bday_block.subtitle = "\n" + bday.format ("%x");
+                bday_block.subtitle = bday.format ("%x");
                 bday_block.visible = true;
             } else {
                 bday_block.visible = false;
             }
-        }
-
-        [CCode (instance_pos = -1)]
-        private bool filter_function (Gtk.ListBoxRow row) {
-            var individual = ((Buds.ContactRow) row).individual;
-
-            if (individual.structured_name == null && !individual.is_favourite) {
-                return false;
-            }
-
-            var search_term = search_entry.text.down ();
-
-            if (search_term in individual.display_name.down ()) {
-                return true;
-            }
-
-            return false;
-        }
-
-        private void header_function (Gtk.ListBoxRow row1, Gtk.ListBoxRow? row2) {
-            var name1 = ((Buds.ContactRow) row1).individual.structured_name;
-            Folks.StructuredName name2 = null;
-            if (row2 != null) {
-                name2 = ((Buds.ContactRow) row2).individual.structured_name;
-            }
-
-            string header_string = null;
-            if (name1 != null) {
-                if (name1.family_name != "" && name1.family_name.@get (0).isalpha ()) {
-                    header_string = name1.family_name.substring (0, 1).up ();
-                } else if (name1.given_name != "" && name1.given_name.@get (0).isalpha ()) {
-                    header_string = name1.given_name.substring (0, 1).up ();
-                } else {
-                    header_string = _("#");
-                }
-            } else if (name2 != null) {
-                header_string = _("#");
-            }
-
-            if (name2 != null) {
-                if (name2.family_name != "") {
-                    if (name2.family_name.substring (0, 1).up () == header_string || !name2.family_name.@get (0).isalpha ()) {
-                        return;
-                    }
-                } else if (name2.given_name != "") {
-                    if (name2.given_name.substring (0, 1).up () == header_string || !name2.given_name.@get (0).isalpha ()) {
-                        return;
-                    }
-                }
-            }
-
-            if (header_string != null) {
-                var header_label = new Gtk.Label (header_string) {
-                    halign = Gtk.Align.START,
-                    margin_start = 6
-                };
-                header_label.add_css_class ("heading");
-                header_label.add_css_class ("dim-label");
-                row1.set_header (header_label);
-            }
-        }
-
-        [CCode (instance_pos = -1)]
-        private int sort_function (Gtk.ListBoxRow row1, Gtk.ListBoxRow row2) {
-            var name1 = ((Buds.ContactRow) row1).individual.structured_name;
-            var name2 = ((Buds.ContactRow) row2).individual.structured_name;
-
-            if (name1 != null) {
-                if (name2 == null) {
-                    return -1;
-                } else if (name1.family_name.@get (0).isalpha ()) {
-                    if (name2.family_name == "" || !name2.family_name.@get (0).isalpha ()) {
-                        if (name2.given_name.@get (0).isalpha ()) {
-                            return name1.family_name.collate (name2.given_name);
-                        } else {
-                            return -1;
-                        }
-                    } else {
-                        return name1.family_name.collate (name2.family_name);
-                    }
-                } else if (name2.family_name.@get (0).isalpha ()) {
-                    if (name1.given_name.@get (0).isalpha ()) {
-                        return name1.given_name.collate (name2.family_name);
-                    } else {
-                        return 1;
-                    }
-                }
-            } else if (name2 != null) {
-                return 1;
-            }
-
-            var displayname1 = ((Buds.ContactRow) row1).individual.display_name;
-            var displayname2 = ((Buds.ContactRow) row2).individual.display_name;
-            return displayname1.collate (displayname2);
         }
     }
 }
