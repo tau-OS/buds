@@ -19,11 +19,7 @@
 namespace Buds.Core {
     public class Store : Object {
         public Folks.IndividualAggregator aggregator { get; private set; }
-        public Folks.BackendStore backend_store {
-            get {
-                return aggregator.backend_store;
-            }
-        }
+        public Folks.BackendStore backend_store { get; private set; }
 
         private ListStore _address_books = new GLib.ListStore (typeof (Folks.PersonaStore));
         public ListModel address_books {
@@ -63,7 +59,7 @@ namespace Buds.Core {
 
         construct {
             // Setup Backends
-            var backend_store = Folks.BackendStore.dup ();
+            backend_store = Folks.BackendStore.dup ();
             // TODO: its 3am but i need to impleent ListModel
             foreach (var backend in backend_store.enabled_backends.values) {
                 foreach (var persona_store in backend.persona_stores.values) {
@@ -261,6 +257,45 @@ namespace Buds.Core {
                 }
             }
             return false;
+        }
+
+        public async void ensure_local_store () throws Error {
+            var eds_backend = backend_store.dup_backend_by_name ("eds");
+            if (eds_backend == null) {
+                throw new IOError.NOT_FOUND ("Evolution Data Server backend not available");
+            }
+
+            yield eds_backend.prepare ();
+
+            // Check if we already have a local address book
+            bool has_local = false;
+            foreach (var persona_store in eds_backend.persona_stores.values) {
+                if (persona_store.can_add_personas == Folks.MaybeBool.TRUE) {
+                    has_local = true;
+                    break;
+                }
+            }
+
+            if (!has_local) {
+                debug ("No local address book found, creating one...");
+                // EDS will automatically create a default local address book on first use
+            }
+        }
+
+        public void set_backend_enabled (string backend_name, bool enabled) {
+            try {
+                if (enabled) {
+                    backend_store.enable_backend (backend_name);
+                } else {
+                    backend_store.disable_backend (backend_name);
+                }
+            } catch (Error e) {
+                warning ("Failed to %s backend '%s': %s", enabled ? "enable" : "disable", backend_name, e.message);
+            }
+        }
+
+        public bool is_backend_enabled (string backend_name) {
+            return backend_name in backend_store.enabled_backends;
         }
 
         private Folks.PersonaStore? get_primary_store () {

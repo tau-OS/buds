@@ -84,10 +84,22 @@ namespace Buds.Core {
     }
 
     public class IndividualSorter : Gtk.Sorter {
-        // User changeable later :)
         private bool sort_on_surname = false;
+        private GLib.Settings settings;
 
-        public IndividualSorter () {}
+        public IndividualSorter () {
+            settings = new GLib.Settings ("com.fyralabs.Buds");
+            update_sort_order ();
+
+            settings.changed["sort-order"].connect (() => {
+                update_sort_order ();
+                changed (Gtk.SorterChange.DIFFERENT);
+            });
+        }
+
+        private void update_sort_order () {
+            sort_on_surname = settings.get_string ("sort-order") == "surname";
+        }
 
         public override Gtk.Ordering compare (Object? item1, Object? item2) {
             unowned var a = item1 as Folks.Individual;

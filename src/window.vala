@@ -58,7 +58,7 @@ namespace Buds {
         [GtkChild]
         private unowned Gtk.MenuButton menu_button;
 
-        public Core.Store store = Core.Store.get_default ();
+        public Core.Store store;
 
         private ContactRow? _selected_row = null;
         public ContactRow? selected_row {
@@ -69,8 +69,10 @@ namespace Buds {
             }
         }
 
-        public Window (Buds.Application app) {
+        public Window (Buds.Application app, Core.Store store_instance) {
             Object (application : app);
+
+            store = store_instance;
 
             contacts_listbox.bind_model (store.filter_model, create_row_for_item_cb);
 

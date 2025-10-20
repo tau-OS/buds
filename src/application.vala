@@ -19,6 +19,7 @@
 namespace Buds {
     public class Application : He.Application {
         private Window window;
+        private Core.Store store;
 
         public Application () {
             Object (
@@ -48,7 +49,16 @@ namespace Buds {
 
             Bis.init ();
 
-            window = new Buds.Window (this);
+            store = new Core.Store ();
+            store.ensure_local_store.begin ((obj, res) => {
+                try {
+                    store.ensure_local_store.end (res);
+                } catch (Error e) {
+                    warning ("Failed to ensure local store: %s", e.message);
+                }
+            });
+
+            window = new Buds.Window (this, store);
         }
 
         protected override void activate () {
@@ -77,7 +87,9 @@ namespace Buds {
         }
 
         private void on_preferences_action () {
-            message ("nya");
+            var preferences_dialog = new PreferencesDialog (store);
+            preferences_dialog.set_transient_for (active_window);
+            preferences_dialog.present ();
         }
     }
 }

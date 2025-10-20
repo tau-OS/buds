@@ -1,0 +1,20 @@
+using Gtk 4.0;
+using He 1;
+
+template $BudsPreferencesDialog : He.SettingsWindow {
+  default-width: 440;
+
+  [page]
+  He.SettingsPage {
+    title: _("Address Books");
+
+    He.SettingsRow sort_order_row {
+      title: _("Sort Order");
+    }
+
+    He.SettingsList backends_list {
+      title: _("Contact Sources");
+      description: _("Enable or disable contact sources");
+    }
+  }
+}

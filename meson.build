@@ -27,7 +27,7 @@ conf.set_quoted('LOCALEDIR', join_paths(get_option('prefix'), get_option('locale
 gnome = import('gnome')
 i18n = import('i18n')
 
-add_global_arguments('-DGETTEXT_PACKAGE="@0@"'.format (meson.project_name()), language:'c')
+add_global_arguments('-DGETTEXT_PACKAGE="@0@"'.format (meson.project_name()), '-w', language:'c')
 
 # Blueprint
 subproject('blueprint-compiler')

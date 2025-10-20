@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <schemalist>
-  <schema path="/com/fyralabs/Buds/" id="@app-id@" gettext-domain="@gettext-package@">
+  <schema path="/com/fyralabs/Buds/" id="com.fyralabs.Buds" gettext-domain="com.fyralabs.Buds">
     <key name="window-width" type="i">
       <default>600</default>
       <summary>Window width</summary>
@@ -12,6 +12,11 @@
     <key name="is-maximized" type="b">
       <default>false</default>
       <summary>Window maximized state</summary>
+    </key>
+    <key name="sort-order" type="s">
+      <default>"name"</default>
+      <summary>Contact sort order</summary>
+      <description>How contacts should be sorted: by "name" (given name first) or "surname" (family name first)</description>
     </key>
   </schema>
 </schemalist>
