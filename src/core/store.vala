@@ -154,7 +154,7 @@ namespace Buds.Core {
         public async void add_contact (string given_name, string family_name, string? phone = null, string? email = null, DateTime? birthday = null, string? avatar_path = null) throws Error {
             var primary_store = get_primary_store ();
             if (primary_store == null) {
-                throw new IOError.NOT_FOUND ("No writeable persona store found");
+                throw new IOError.NOT_FOUND ("No local address book is available. You may need to set up a local contact store in System Settings.");
             }
 
             var details = new HashTable<string, Value?> (str_hash, str_equal);
@@ -205,6 +205,20 @@ namespace Buds.Core {
         }
 
         public async void update_contact (Folks.Individual individual, string given_name, string family_name, string? phone = null, string? email = null, DateTime? birthday = null, string? avatar_path = null) throws Error {
+            // Check if any of the individual's personas are writeable
+            bool has_writeable_persona = false;
+            foreach (var persona in individual.personas) {
+                if (persona.store.can_add_personas == Folks.MaybeBool.TRUE ||
+                    persona.store.can_remove_personas == Folks.MaybeBool.TRUE) {
+                    has_writeable_persona = true;
+                    break;
+                }
+            }
+
+            if (!has_writeable_persona) {
+                throw new IOError.NOT_SUPPORTED ("This contact is synced from a service like Google or iCloud and can only be edited in that service's settings.");
+            }
+
             var full_name = (family_name != "" ? family_name + " " : "") + given_name;
             if (individual is Folks.NameDetails) {
                 var structured_name = new Folks.StructuredName (family_name, given_name, null, null, null);
@@ -237,6 +251,16 @@ namespace Buds.Core {
                 var avatar_icon = new FileIcon (avatar_file);
                 yield ((Folks.AvatarDetails) individual).change_avatar (avatar_icon);
             }
+        }
+
+        public bool can_edit_contact (Folks.Individual individual) {
+            foreach (var persona in individual.personas) {
+                if (persona.store.can_add_personas == Folks.MaybeBool.TRUE ||
+                    persona.store.can_remove_personas == Folks.MaybeBool.TRUE) {
+                    return true;
+                }
+            }
+            return false;
         }
 
         private Folks.PersonaStore? get_primary_store () {

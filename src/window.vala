@@ -116,6 +116,12 @@ namespace Buds {
             menu_button.get_popover ().has_arrow = false;
         }
 
+        private void show_error_dialog (string title, string message) {
+            var error_dialog = new He.Dialog (this, title, message);
+            error_dialog.icon = "dialog-error-symbolic";
+            error_dialog.present ();
+        }
+
         private void update_search_filter () {
             var search_term = search_entry.text.strip ();
             store.update_query (search_term);
@@ -209,6 +215,10 @@ namespace Buds {
                         dialog.hide_dialog ();
                     } catch (Error e) {
                         warning ("Failed to add contact: %s", e.message);
+                        string error_message;
+                        error_message = _("No local address book is available. You may need to set up a local contact store in System Settings.");
+                        show_error_dialog (_("Unable to Add Contact"), error_message);
+                        dialog.hide_dialog ();
                     }
                 });
             });
@@ -332,6 +342,10 @@ namespace Buds {
                         dialog.hide_dialog ();
                     } catch (Error e) {
                         warning ("Failed to update contact: %s", e.message);
+                        string error_message;
+                        error_message = _("This contact is synced from a service like Google or iCloud and can only be edited in that service's settings.");
+                        show_error_dialog (_("Unable to Save Changes"), error_message);
+                        dialog.hide_dialog ();
                     }
                 });
             });
@@ -358,7 +372,12 @@ namespace Buds {
             if (row.selected) {
                 selected_row = row;
                 setup_contact_info ();
-                edit_button.visible = true;
+                var contact = get_selected_contact ();
+                if (contact != null && store.can_edit_contact (contact)) {
+                    edit_button.visible = true;
+                } else {
+                    edit_button.visible = false;
+                }
             } else {
                 selected_row = null;
                 edit_button.visible = false;
