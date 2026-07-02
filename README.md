@@ -1,3 +1,7 @@
+# Buds is Deprecated
+
+Try out any of [these great apps](https://flathub.org/en/apps/search?q=contacts)!
+
 <img align="left" style="vertical-align: middle" width="120" height="120" src="data/icons/com.fyralabs.Buds.svg">
 
 # Buds
